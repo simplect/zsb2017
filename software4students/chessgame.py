@@ -178,14 +178,18 @@ class ChessBoard:
             if piece.material == 'p':
                 # Check boundary and side
                 direction = -1 if self.turn == Side.White else 1
-                if y+direction > 8:
+
+                if y+direction < 0 or y+direction > 7:
                     continue
+                print(y+direction)
                 check  = self.get_boardpiece((x,y+direction))
                 # Can the pawn move forward?
                 if check is None:
                     legal_moves.append(to_move((x,y), (x, y+direction)))
                 # Can the pawn attack diagonally?
                 for attack in [-1, 1]:
+                    if x+attack < 0 or x+attack > 7:
+                        continue
                     check  = self.get_boardpiece((x+attack, y+direction))
                     if check is not None:
                         legal_moves.append(to_move((x,y), (x+attack, y+direction)))
