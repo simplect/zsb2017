@@ -169,32 +169,35 @@ class ChessBoard:
     # TODO: write an implementation for this function
     def legal_moves(self):
         legal_moves = []
-        for x in range(8):
-            for y in range(8):
-                piece = self.get_boardpiece((x,y))
-                if piece is None or not piece.side == self.turn:
+        for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
+            piece = self.get_boardpiece((x,y))
+
+            if piece is None or not piece.side == self.turn:
+                continue
+
+            if piece.material == 'p':
+                # Check boundary and side
+                direction = -1 if self.turn == Side.White else 1
+                if y+direction > 8:
                     continue
-                print(piece.material, piece.side)
-                if piece.material == 'p':
-                    direction = -1 if self.turn == Side.White else 1
-                    
-                    check  = self.get_boardpiece((x,y+direction))
-                    if check is None:
-                        legal_moves.append(to_move((x,y), (x, y+direction)))
-                    # Check for the left/right attacks 
-                    for attack in [-1, 1]:
-                        check  = self.get_boardpiece((x+attack, y+direction))
-                        if check is not None:
-                            legal_moves.append(to_move((x,y), (x+attack, y+direction)))
-                       
-                elif piece.material == 'k':
-                    # Check horizontal, vert, diag one step
-                    for (i,j) in [(a,b) for a in range(-1,2) for b in range(-1,2)]:
-                        legal_moves.append(to_notation((x,y)) + to_notation((x+i, y+j)))
-                elif piece.material == 'r':
-                    # Check horiz many step
-                    pass
-                # forward move
+                check  = self.get_boardpiece((x,y+direction))
+                # Can the pawn move forward?
+                if check is None:
+                    legal_moves.append(to_move((x,y), (x, y+direction)))
+                # Can the pawn attack diagonally?
+                for attack in [-1, 1]:
+                    check  = self.get_boardpiece((x+attack, y+direction))
+                    if check is not None:
+                        legal_moves.append(to_move((x,y), (x+attack, y+direction)))
+                   
+            elif piece.material == 'k':
+                # Check horizontal, vert, diag one step
+                for (i,j) in [(a,b) for a in range(-1,2) for b in range(-1,2)]:
+                    legal_moves.append(to_notation((x,y)) + to_notation((x+i, y+j)))
+            elif piece.material == 'r':
+                # Check horiz many step
+                pass
+            # forward move
         print(legal_moves)
 
     # This function should return, given the move specified (in the format
