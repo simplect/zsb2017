@@ -182,7 +182,8 @@ class ChessBoard:
                         legal_moves.append(to_notation((x,y)) + to_notation((x,y-1)))
                 elif piece.material == 'k':
                     # Check horizontal, vert, diag one step
-                    pass
+                    for (i,j) in [(a,b) for a in range(-1,2) for b in range(-1,2)]:
+                        legal_moves.append(to_notation((x,y)) + to_notation((x+i, y+j)))
                 elif piece.material == 'r':
                     # Check horiz many step
                     pass
