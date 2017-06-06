@@ -198,14 +198,37 @@ class ChessBoard:
                         continue
 
                     legal_moves.append(to_move((x,y), (nx, ny)))
-                    
+                        
             elif piece.material == 'k':
                 # Check horizontal, vert, diag one step
                 for (i,j) in [(a,b) for a in range(-1,2) for b in range(-1,2)]:
-                    legal_moves.append(to_notation((x,y)) + to_notation((x+i, y+j)))
+                    if x + i < 0 or x + i > 7 or y + j < 0 or y + j > 7:
+                        continue
+                    
+                    check  = self.get_boardpiece((x + i, y + j))
+
+                    if check is not None:
+                        if check.side == piece.side:
+                            continue
+
+                    legal_moves.append(to_move((x,y), (x + i, y + j)))
+
             elif piece.material == 'r':
                 # Check horiz many step
-                pass
+                for (a,b) in [(1,0),(-1,0),(0,1),(0,-1)]:
+                    for i in range(1,8):
+                         
+                        if x + a*i < 0 or x + a*i > 7 or y + b*i < 0 or y + b*i > 7:
+                            continue
+                        check  = self.get_boardpiece((x+a*i, y+b*i))
+
+                        if check is not None:
+                            if check.side != piece.side:
+                                legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
+                            break
+                        else:
+                            legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
+
             # forward move
         print(legal_moves)
 
