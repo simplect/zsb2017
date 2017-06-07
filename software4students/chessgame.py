@@ -228,9 +228,8 @@ class ChessBoard:
                             break
                         else:
                             legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
-
-            # forward move
-        print(legal_moves)
+            return legal_moves
+    
 
     # This function should return, given the move specified (in the format
     # 'd2d3') whether this move is legal
@@ -238,6 +237,8 @@ class ChessBoard:
     # of legal_moves()
     def is_legal_move(self, move):
         legal_moves = self.legal_moves()
+        if move not in legal_moves:
+            return False
         return True
 
 
