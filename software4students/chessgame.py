@@ -2,6 +2,11 @@ from __future__ import print_function
 from copy import deepcopy
 import sys
 
+# GAME CONFIGURATION
+DEBUG = False
+PLAY_AGAINST = True 
+PLAY_AGAINST_EASY = False
+
 ## Helper functions
 
 # Translate a position in chess notation to x,y-coordinates
@@ -210,6 +215,7 @@ class ChessBoard:
                 if check.side == piece.side:
                     continue
 
+
             legal_moves.append(to_move((x,y), (x + i, y + j)))
         return legal_moves
 
@@ -294,7 +300,6 @@ class ChessComputer:
     # the score and the move that should be executed
     # NOTE: use ChessComputer.evaluate_board() to calculate the score
     # of a specific board configuration after the max depth is reached
-    # TODO: write an implementation for this function
     @staticmethod
     def minimax(chessboard, depth):
         legal_moves = chessboard.legal_moves()
@@ -329,7 +334,41 @@ class ChessComputer:
     # of a specific board configuration after the max depth is reached
     @staticmethod
     def alphabeta(chessboard, depth, alpha, beta):
-        return (0, "no implementation written")
+        legal_moves = chessboard.legal_moves()
+
+        def mini(chessboard, depth_left, alpha, beta):
+                v = 9999
+                for move in chessboard.legal_moves():
+                    v = min(v, maxi(chessboard.make_move(move), depth_left-1, alpha, beta))
+
+                    beta = min(v, beta)
+                    if beta <= alpha:
+                        break
+
+                return v
+
+        def maxi(chessboard, depth_left, alpha, beta):
+            if depth_left < 1:
+                return ChessComputer.evaluate_board(chessboard, depth_left)
+            else:
+                v = -9999
+                for move in chessboard.legal_moves():
+                    v = max(v, mini(chessboard.make_move(move), depth_left-1, alpha, beta))
+
+                    alpha = max(v, alpha)
+                    if beta <= alpha:
+                        break
+
+                return v
+
+        v = -9999
+        maxmove = ''
+        for move in legal_moves:
+            (v, maxmove) = max((v, maxmove), (mini(chessboard.make_move(move), 3, alpha, beta), move))
+
+        return (v, maxmove)
+
+
 
     # Calculates the score of a given board configuration based on the 
     # material left on the board. Returns a score number, in which positive
@@ -378,7 +417,7 @@ class ChessGame:
      
         # NOTE: you can make this depth higher once you have implemented
         # alpha-beta, which is more efficient
-        self.depth = 4
+        self.depth = 7
         self.chessboard = ChessBoard(turn)
 
         # If a file was specified as commandline argument, use that filename
@@ -397,31 +436,51 @@ class ChessGame:
         self.chessboard.load_from_input(content)
 
     def main(self):
+        if PLAY_AGAINST:
+            print("Play against mode enabled, alphabeta will be playing white.")
         while True:
             print(self.chessboard)
-
-            # Print the legal moves ~ Merijn
-            print("Legal moves: {}".format(self.chessboard.legal_moves()))
+            if DEBUG:
+                # Print the legal moves ~ Merijn
+                print("Legal moves: {}".format(self.chessboard.legal_moves()))
 
             # Print the current score
             score = ChessComputer.evaluate_board(self.chessboard,self.depth)
             print("Current score: " + str(score))
             
-            # Calculate the best possible move
-            new_score, best_move = self.make_computer_move()
-            
-            print("Best move: " + best_move)
-            print("Score to achieve: " + str(new_score))
-            print("")
+            if PLAY_AGAINST and self.chessboard.turn == 0:
+                move = self.make_computer_move()
+
+            if not PLAY_AGAINST or PLAY_AGAINST_EASY:
+                # Calculate the best possible move
+                print("Calculating best move...")
+                new_score, best_move = ChessComputer.computer_move(self.chessboard,
+                self.depth, alphabeta=True)
+                print("Best move: " + best_move)
+                print("Score to achieve: " + str(new_score))
+                print("")
+
             self.make_human_move()
 
 
     def make_computer_move(self):
-        print("Calculating best move...")
+        new_score, best_move = ChessComputer.computer_move(self.chessboard,
+            self.depth, alphabeta=True)
 
-        return ChessComputer.computer_move(self.chessboard,
-                self.depth, alphabeta=False)
-        
+        print("White is playing {}".format(best_move))
+
+        self.chessboard = self.chessboard.make_move(best_move)
+        print(self.chessboard)
+
+        # Exit the game if one of the kings is dead
+        if self.chessboard.is_king_dead(Side.Black):
+            print(self.chessboard)
+            print("White wins!")
+            sys.exit(0)
+        elif self.chessboard.is_king_dead(Side.White):
+            print(self.chessboard)
+            print("Black wins!")
+            sys.exit(0)
 
     def make_human_move(self):
         # Endlessly request input until the right input is specified
