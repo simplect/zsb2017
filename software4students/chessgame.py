@@ -36,14 +36,16 @@ class Material:
     Rook, King, Pawn = ['r','k','p']
 class Side:
     White, Black = range(0,2)
+class Score:
+    Rook, King, Pawn = [5, 10, 1]
 
 # A chesspiece on the board is specified by the side it belongs to and the type
 # of the chesspiece
 class Piece:
-    def __init__(self, side, material):
+    def __init__(self, side, material, score):
         self.side = side
         self.material = material
-
+        self.score = score
 
 # A chess configuration is specified by whose turn it is and a 2d array
 # with all the pieces on the board
@@ -96,8 +98,15 @@ class ChessBoard:
             else:
                 side = Side.Black
             material = char.lower()
+            
+            if material == "p":
+                score = 1
+            elif material == "k":
+                score = 10
+            elif material == "r":
+                score = 5
 
-            piece = Piece(side, material)
+            piece = Piece(side, material, score)
             self.set_boardpiece((x,y),piece)
             x += 1
 
@@ -304,7 +313,22 @@ class ChessComputer:
     # means white is better off, while negative means black is better of
     @staticmethod
     def evaluate_board(chessboard, depth_left):
-        return 0
+        score_white = 0
+        score_black = 0
+        for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
+            piece = chessboard.get_boardpiece((x,y))
+
+            if piece is None:
+                continue
+            elif piece.side == Side.White:
+                score_white += piece.score 
+            elif piece.side == Side.Black:
+                score_black += piece.score
+
+        if score_black < score_white:
+            return 1
+        else:
+            return -1
 
 # This class is responsible for starting the chess game, playing and user 
 # feedback
@@ -350,6 +374,7 @@ class ChessGame:
 
     def make_computer_move(self):
         print("Calculating best move...")
+        print(ChessComputer.evaluate_board(self.chessboard, self.depth))
         return ChessComputer.computer_move(self.chessboard,
                 self.depth, alphabeta=True)
         
