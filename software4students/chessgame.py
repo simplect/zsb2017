@@ -228,7 +228,7 @@ class ChessBoard:
                             break
                         else:
                             legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
-            return legal_moves
+        return legal_moves
     
 
     # This function should return, given the move specified (in the format
