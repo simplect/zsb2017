@@ -177,7 +177,7 @@ class ChessBoard:
 
             if piece.material == 'p':
                 # Check boundary and side
-                ny = y + -1 if self.turn == Side.White else 1
+                ny = y + (-1 if self.turn == Side.White else 1)
                 if ny < 0 or ny > 7:
                     continue
 
