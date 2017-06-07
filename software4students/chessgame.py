@@ -263,7 +263,7 @@ class ChessBoard:
     # of legal_moves()
     def is_legal_move(self, move):
         legal_moves = self.legal_moves()
-        print(legal_moves)
+
         if move not in legal_moves:
             return False
         return True
@@ -287,6 +287,7 @@ class ChessComputer:
         else:
             return ChessComputer.minimax(chessboard, depth)
 
+    
 
     # This function uses minimax to calculate the next move. Given the current
     # chessboard and max depth, this function should return a tuple of the
@@ -296,9 +297,31 @@ class ChessComputer:
     # TODO: write an implementation for this function
     @staticmethod
     def minimax(chessboard, depth):
-        return (0, "no implementation written")
+        legal_moves = chessboard.legal_moves()
 
-    # This function uses alphabeta to calculate the next move. Given the
+        def mini(chessboard, depth_left):
+                v = 9999
+                for move in chessboard.legal_moves():
+                    v = min(v, maxi(chessboard.make_move(move), depth_left-1))
+                return v
+
+        def maxi(chessboard, depth_left):
+            if depth_left < 1:
+                return ChessComputer.evaluate_board(chessboard, depth_left)
+            else:
+                v = -9999
+                for move in chessboard.legal_moves():
+                    v = max(v, mini(chessboard.make_move(move), depth_left-1))
+                return v
+
+        v = -9999
+        maxmove = ''
+        for move in legal_moves:
+            (v, maxmove) = max((v, maxmove), (mini(chessboard.make_move(move), 3), move))
+        
+        return (v, maxmove)
+
+    # This function uses lphabeta to calculate the next move. Given the
     # chessboard and max depth, this function should return a tuple of the
     # the score and the move that should be executed.
     # It has alpha and beta as extra pruning parameters
@@ -311,8 +334,11 @@ class ChessComputer:
     # Calculates the score of a given board configuration based on the 
     # material left on the board. Returns a score number, in which positive
     # means white is better off, while negative means black is better of
+    # NOTE: Most comments in here are ideas which are disabled :) ~ Merijn
+    # TODO: Optimize this with depth_left
     @staticmethod
     def evaluate_board(chessboard, depth_left):
+        """
         score_white = 0
         score_black = 0
         for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
@@ -329,6 +355,21 @@ class ChessComputer:
             return 1
         else:
             return -1
+        """
+        score = 0
+        for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
+            piece = chessboard.get_boardpiece((x,y))
+
+            if piece is None:
+                continue
+            elif piece.side == chessboard.turn:
+                score += piece.score
+            else:
+                score -= piece.score
+
+        #return score * (1 if chessboard.turn == Side.White else -1)
+        return score 
+
 
 # This class is responsible for starting the chess game, playing and user 
 # feedback
@@ -359,6 +400,9 @@ class ChessGame:
         while True:
             print(self.chessboard)
 
+            # Print the legal moves ~ Merijn
+            print("Legal moves: {}".format(self.chessboard.legal_moves()))
+
             # Print the current score
             score = ChessComputer.evaluate_board(self.chessboard,self.depth)
             print("Current score: " + str(score))
@@ -374,9 +418,9 @@ class ChessGame:
 
     def make_computer_move(self):
         print("Calculating best move...")
-        print(ChessComputer.evaluate_board(self.chessboard, self.depth))
+
         return ChessComputer.computer_move(self.chessboard,
-                self.depth, alphabeta=True)
+                self.depth, alphabeta=False)
         
 
     def make_human_move(self):
