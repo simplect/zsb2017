@@ -161,7 +161,68 @@ class ChessBoard:
                         piece.material == Material.King:
                     seen_king = True
         return not seen_king
+
+    def check_pawn(self, piece, location):
+        # Check boundary and side
+        (x, y) = location
+        legal_moves = []
+
+        ny = y + (-1 if self.turn == Side.White else 1)
+        if ny < 0 or ny > 7:
+            return []
+
+        for shift in range(-1,2):
+            nx = x+shift
+            
+            if nx < 0 or nx > 7:
+                continue
+            
+            check  = self.get_boardpiece((nx,ny))
+
+            if check is not None:
+                if shift == 0 or check.side == piece.side:
+                    continue
+            elif shift != 0:
+                continue
+
+            legal_moves.append(to_move((x,y), (nx, ny)))
+        return legal_moves
     
+    def check_king(self, piece, location):
+        legal_moves = []
+        (x, y) = location
+        for (i,j) in [(a,b) for a in range(-1,2) for b in range(-1,2)]:
+            if x + i < 0 or x + i > 7 or y + j < 0 or y + j > 7:
+                continue
+            
+            check  = self.get_boardpiece((x + i, y + j))
+
+            if check is not None:
+                if check.side == piece.side:
+                    continue
+
+            legal_moves.append(to_move((x,y), (x + i, y + j)))
+        return legal_moves
+
+    def check_rook(self, piece, location):
+        legal_moves = []
+        (x, y) = location
+
+        for (a,b) in [(1,0),(-1,0),(0,1),(0,-1)]:
+            for i in range(1,8):
+                 
+                if x + a*i < 0 or x + a*i > 7 or y + b*i < 0 or y + b*i > 7:
+                    continue
+                check  = self.get_boardpiece((x+a*i, y+b*i))
+
+                if check is not None:
+                    if check.side != piece.side:
+                        legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
+                    break
+                else:
+                    legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
+        return legal_moves
+  
     # This function should return, given the current board configuation and
     # which players turn it is, all the moves possible for that player
     # It should return these moves as a list of move strings, e.g.
@@ -176,58 +237,14 @@ class ChessBoard:
                 continue
 
             if piece.material == 'p':
-                # Check boundary and side
-                ny = y + (-1 if self.turn == Side.White else 1)
-                if ny < 0 or ny > 7:
-                    continue
-
-                for shift in range(-1,2):
-                    nx = x+shift
-                    
-                    if nx < 0 or nx > 7:
-                        continue
-                    
-                    check  = self.get_boardpiece((nx,ny))
-
-                    if check is not None:
-                        if shift == 0:
-                            continue
-                        if check.side == piece.side:
-                            continue
-                    elif shift != 0:
-                        continue
-
-                    legal_moves.append(to_move((x,y), (nx, ny)))
+                legal_moves += self.check_pawn(piece, (x,y))
                         
             elif piece.material == 'k':
-                # Check horizontal, vert, diag one step
-                for (i,j) in [(a,b) for a in range(-1,2) for b in range(-1,2)]:
-                    if x + i < 0 or x + i > 7 or y + j < 0 or y + j > 7:
-                        continue
-                    
-                    check  = self.get_boardpiece((x + i, y + j))
-
-                    if check is not None:
-                        if check.side == piece.side:
-                            continue
-
-                    legal_moves.append(to_move((x,y), (x + i, y + j)))
+                legal_moves += self.check_king(piece, (x,y))
 
             elif piece.material == 'r':
-                # Check horiz many step
-                for (a,b) in [(1,0),(-1,0),(0,1),(0,-1)]:
-                    for i in range(1,8):
-                         
-                        if x + a*i < 0 or x + a*i > 7 or y + b*i < 0 or y + b*i > 7:
-                            continue
-                        check  = self.get_boardpiece((x+a*i, y+b*i))
+                legal_moves += self.check_rook(piece, (x,y))
 
-                        if check is not None:
-                            if check.side != piece.side:
-                                legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
-                            break
-                        else:
-                            legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
         return legal_moves
     
 
@@ -237,6 +254,7 @@ class ChessBoard:
     # of legal_moves()
     def is_legal_move(self, move):
         legal_moves = self.legal_moves()
+        print(legal_moves)
         if move not in legal_moves:
             return False
         return True
