@@ -249,6 +249,7 @@ class ChessBoard:
   
     
     def check_knight(self, piece, location):
+        pass
     
     def check_queen(self, piece, location):
         legal_moves = []
