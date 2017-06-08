@@ -1,3 +1,10 @@
+# chessgame.py
+# In this file, chess is implemented using python.
+# Babette Mooij, 10740414
+# Merijn Terstroote, 11173106
+# Groep D
+# 09-06-2017
+
 from __future__ import print_function
 from copy import deepcopy
 import sys
@@ -625,8 +632,6 @@ class ChessGame:
 
             print("Current score: " + str(score))
 
-            #print(ChessComputer.check_stalemate(self.chessboard, to_coordinate('e8')))
-
             if PLAY_AGAINST and self.chessboard.turn == Side.White:
                 move = self.make_computer_move()
                 self.check_game()
@@ -642,7 +647,6 @@ class ChessGame:
 
             self.make_human_move()
             self.check_game()
-
 
     def make_computer_move(self):
         new_score, best_move = ChessComputer.computer_move(self.chessboard,
