@@ -35,14 +35,17 @@ def to_move(from_coord, to_coord):
 # - Material.Rook
 # - Material.King
 # - Material.Pawn
+# - Material.Knight
+# - Material.Queen
+# - Material.Bishop
 # - Side.White
 # - Side.Black
 class Material:
-    Rook, King, Pawn = ['r','k','p']
+    Rook, King, Pawn, Knight, Queen, Bishop = ['r','k','p','h','q','b']
 class Side:
     White, Black = range(0,2)
 class Score:
-    Rook, King, Pawn = [5, 10, 1]
+    Rook, King, Pawn, Knight, Queen, Bishop = [5, 10, 1, 3, 9, 3]
 
 # A chesspiece on the board is specified by the side it belongs to and the type
 # of the chesspiece
@@ -110,6 +113,12 @@ class ChessBoard:
                 score = 10
             elif material == "r":
                 score = 5
+            elif material == "h":
+                score = 3
+            elif material == "q":
+                score = 9
+            elif material == "b":
+                score = 3
 
             piece = Piece(side, material, score)
             self.set_boardpiece((x,y),piece)
@@ -238,6 +247,50 @@ class ChessBoard:
                     legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
         return legal_moves
   
+    
+    def check_knight(self, piece, location):
+    
+    def check_queen(self, piece, location):
+        legal_moves = []
+        (x, y) = location
+
+        for (a,b) in [(m,n) for m in range(-1,2) for n in range(-1,2)]:
+            for i in range(1,8):
+                 
+                if x + a*i < 0 or x + a*i > 7 or y + b*i < 0 or y + b*i > 7:
+                    continue
+                check  = self.get_boardpiece((x+a*i, y+b*i))
+
+                if check is not None:
+                    if check.side != piece.side:
+                        legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
+                    break
+                else:
+                    legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
+        return legal_moves
+  
+
+    def check_bishop(self, piece, location):
+        legal_moves = []
+        (x, y) = location
+
+        for (a,b) in [(-1,-1),(-1,1),(1,1),(-1,1)]:
+            for i in range(1,8):
+                 
+                if x + a*i < 0 or x + a*i > 7 or y + b*i < 0 or y + b*i > 7:
+                    continue
+                check  = self.get_boardpiece((x+a*i, y+b*i))
+
+                if check is not None:
+                    if check.side != piece.side:
+                        legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
+                    break
+                else:
+                    legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
+        return legal_moves
+  
+
+
     # This function should return, given the current board configuation and
     # which players turn it is, all the moves possible for that player
     # It should return these moves as a list of move strings, e.g.
@@ -259,6 +312,15 @@ class ChessBoard:
 
             elif piece.material == 'r':
                 legal_moves += self.check_rook(piece, (x,y))
+            
+            elif piece.material == 'h':
+                legal_moves += self.check_knight(piece, (x,y))
+
+            elif piece.material == 'q':
+                legal_moves += self.check_queen(piece, (x,y))
+
+            elif piece.material == 'b':
+                legal_moves += self.check_bishop(piece, (x,y))
 
         return legal_moves
     
@@ -377,24 +439,6 @@ class ChessComputer:
     # TODO: Optimize this with depth_left
     @staticmethod
     def evaluate_board(chessboard, depth_left):
-        """
-        score_white = 0
-        score_black = 0
-        for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
-            piece = chessboard.get_boardpiece((x,y))
-
-            if piece is None:
-                continue
-            elif piece.side == Side.White:
-                score_white += piece.score 
-            elif piece.side == Side.Black:
-                score_black += piece.score
-
-        if score_black < score_white:
-            return 1
-        else:
-            return -1
-        """
         score = 0
         for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
             piece = chessboard.get_boardpiece((x,y))
@@ -406,7 +450,6 @@ class ChessComputer:
             else:
                 score -= piece.score
 
-        #return score * (1 if chessboard.turn == Side.White else -1)
         return score 
 
 
