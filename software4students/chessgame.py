@@ -29,6 +29,12 @@ def to_notation(coordinates):
 def to_move(from_coord, to_coord):
     return to_notation(from_coord) + to_notation(to_coord)
 
+def to_coordinates(move):
+    move_list = list(move)
+    old_place = move_list[0] + move_list[1]
+    new_place = move_list[2] + move_list[3]
+    return to_coordinate(old_place), to_coordinate(new_place)
+
 ## Defining board states
 
 # These Static classes are used as enums for:
@@ -275,14 +281,14 @@ class ChessBoard:
                  
                 if x + a*i < 0 or x + a*i > 7 or y + b*i < 0 or y + b*i > 7:
                     continue
-                check  = self.get_boardpiece((x+a*i, y+b*i))
+                check  = self.get_boardpiece((x + a*i, y + b*i))
 
                 if check is not None:
                     if check.side != piece.side:
-                        legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
+                        legal_moves.append(to_move((x,y), (x + a*i, y + b*i)))
                     break
                 else:
-                    legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
+                    legal_moves.append(to_move((x,y), (x + a*i, y + b*i)))
         return legal_moves
   
 
@@ -467,6 +473,24 @@ class ChessComputer:
                 score -= piece.score
 
         return score 
+        
+    @staticmethod
+    def check_stalemate(chessboard, location):
+        piece = chessboard.get_boardpiece(location)
+        legal_moves_king = chessboard.check_king(piece, location)
+        
+        for move in legal_moves_king:
+            place_king = to_coordinates(move)[1]
+            capture_king = False
+            for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
+                if ChessBoard.is_legal_move(chessboard, to_move((x,y), place_king)):
+                    capture_king = True
+                    break
+            
+            if not capture_king:
+                return False
+
+        return True
 
 
 # This class is responsible for starting the chess game, playing and user 
@@ -506,7 +530,7 @@ class ChessGame:
             # Print the current score
             score = ChessComputer.evaluate_board(self.chessboard,self.depth)
             print("Current score: " + str(score))
-            
+            print(ChessComputer.check_stalemate(self.chessboard,(0,4)))
             if PLAY_AGAINST and self.chessboard.turn == 0:
                 move = self.make_computer_move()
 
