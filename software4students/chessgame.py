@@ -461,7 +461,7 @@ class ChessGame:
      
         # NOTE: you can make this depth higher once you have implemented
         # alpha-beta, which is more efficient
-        self.depth = 4000
+        self.depth = 3
         self.chessboard = ChessBoard(turn)
 
         # If a file was specified as commandline argument, use that filename
