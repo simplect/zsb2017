@@ -4,8 +4,8 @@ import sys
 
 # GAME CONFIGURATION
 DEBUG = False
-PLAY_AGAINST = False 
-PLAY_AGAINST_EASY = False
+PLAY_AGAINST = True 
+PLAY_AGAINST_EASY = True
 
 ## Helper functions
 
@@ -249,7 +249,22 @@ class ChessBoard:
   
     
     def check_knight(self, piece, location):
-        pass
+        legal_moves = []
+        (x, y) = location
+
+        for (i,j) in [(-1,2),(1,2),(-1,-2),(1,-2),(-2,-1),(2,-1),(-2,1),(2,1)]:
+
+            if x + i < 0 or x + i > 7 or y + j < 0 or y + j > 7:
+                continue
+            check = self.get_boardpiece((x + i, y + j))
+
+            if check is not None:
+                if check.side != piece.side:
+                    legal_moves.append(to_move((x,y), (x + i, y +j)))
+            else:
+                legal_moves.append(to_move((x,y), (x + i, y + j)))
+        return legal_moves
+
     
     def check_queen(self, piece, location):
         legal_moves = []
