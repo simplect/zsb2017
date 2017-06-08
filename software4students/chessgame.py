@@ -4,8 +4,8 @@ import sys
 
 # GAME CONFIGURATION
 DEBUG = False
-PLAY_AGAINST = True 
-PLAY_AGAINST_EASY = True
+PLAY_AGAINST = False 
+PLAY_AGAINST_EASY = False
 
 ## Helper functions
 
@@ -310,8 +310,44 @@ class ChessBoard:
                 else:
                     legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
         return legal_moves
-  
 
+    def is_stalemate(self):
+        king = None
+        king_loc = None
+
+        for location in [(x,y) for x in range(8) for y in range(8)]:
+            piece = self.get_boardpiece(location)
+            if piece is not None and piece.material == 'k':
+                king = piece
+                king_loc = location
+
+                legal_moves_king = self.check_king(king, king_loc)
+                free_moves = []
+                if king.side == self.turn:
+                    opponent = True
+                else:
+                    opponent = False
+                opponent_moves = self.legal_moves(opponent=opponent)
+                """
+                print(legal_moves_king)
+                print(opponent_moves)
+                """
+
+                for move in legal_moves_king:
+                    free_move = True
+                    for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
+                        if to_notation((x,y)) + move[2:] in opponent_moves:
+                            free_move = False
+                            break
+                    
+                    if free_move:
+                        free_moves.append(move)
+
+                if king and king.side == self.turn and not free_moves:
+                    return -1
+                elif king and not free_moves:
+                    return 1
+        return 0
 
     # This function should return, given the current board configuation and
     # which players turn it is, all the moves possible for that player
@@ -320,17 +356,18 @@ class ChessBoard:
     # TODO: write an implementation for this function
     def legal_moves(self, opponent = False):
         legal_moves = []
+
+        if opponent:
+            self.turn = Side.White if self.turn == Side.Black else Side.Black
+
         for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
             piece = self.get_boardpiece((x,y))
              
             if piece is None:
                 continue
-            if not opponent and not piece.side == self.turn:
-                continue
-            elif opponent and piece.side == self.turn:
-                continue
 
-
+            if not piece.side == self.turn:
+                continue
 
             if piece.material == 'p':
                 legal_moves += self.check_pawn(piece, (x,y))
@@ -349,6 +386,9 @@ class ChessBoard:
 
             elif piece.material == 'b':
                 legal_moves += self.check_bishop(piece, (x,y))
+
+        if opponent:
+            self.turn = Side.White if self.turn == Side.Black else Side.Black
 
         return legal_moves
     
@@ -425,17 +465,16 @@ class ChessComputer:
     @staticmethod
     def alphabeta(chessboard, depth, alpha, beta):
         legal_moves = chessboard.legal_moves()
-        
         def mini(chessboard, depth_left, alpha, beta):
-                v = 99999999
-                for move in chessboard.legal_moves():
-                    v = min(v, maxi(chessboard.make_move(move), depth_left-1, alpha, beta))
+            v = 99999999
+            for move in chessboard.legal_moves():
+                v = min(v, maxi(chessboard.make_move(move), depth_left-1, alpha, beta))
 
-                    beta = min(v, beta)
-                    if beta <= alpha:
-                        break
+                beta = min(v, beta)
+                if beta <= alpha:
+                    break
 
-                return v
+            return v
 
         def maxi(chessboard, depth_left, alpha, beta):
             if depth_left < 1:
@@ -444,6 +483,7 @@ class ChessComputer:
                 v = -99999999
                 for move in chessboard.legal_moves():
                     v = max(v, mini(chessboard.make_move(move), depth_left-1, alpha, beta))
+
                     alpha = max(v, alpha)
                     if beta <= alpha:
                         break
@@ -453,7 +493,7 @@ class ChessComputer:
         v = -9999999
         maxmove = ''
         for move in legal_moves:
-            (v, maxmove) = max((v, maxmove), (mini(chessboard.make_move(move), depth, alpha, beta), move))
+            (v, maxmove) = max((v, maxmove), (mini(chessboard.make_move(move), depth - 1, alpha, beta), move))
 
         return (v, maxmove)
 
@@ -490,13 +530,10 @@ class ChessComputer:
                     if (x,y) == to_coordinate(move[2:]):
                         scores -= 100
 
-                # Check stalemate
-                #if ChessComputer.check_stalemate(chessboard, (x, y)):
-                #    scores -= 100
-
-
         for score in pieces.values():
             scores += score
+
+        #score += 100 * chessboard.is_stalemate()
 
         return scores
         
@@ -546,24 +583,39 @@ class ChessGame:
             content = f.read()
 
         self.chessboard.load_from_input(content)
+    def check_game(self):
+        # Exit the game if one of the kings is dead
+        stale = self.chessboard.is_stalemate()
+        if self.chessboard.is_king_dead(Side.Black):
+            print(self.chessboard)
+            print("White wins!")
+            sys.exit(0)
+        elif self.chessboard.is_king_dead(Side.White):
+            print(self.chessboard)
+            print("Black wins!")
+            sys.exit(0)
+        elif stale != 0:
+            print(self.chessboard)
+            print("Stalemate!")
+            if stale == -1:
+                print("{} wins!"
+                        .format("White" if self.chessboard.turn == Side.Black else "Black"))
+            elif stale == 1:
+                print("{} wins!"
+                        .format("White" if self.chessboard.turn == Side.White else "Black"))
+
+
+            sys.exit(0)
+
 
     def main(self):
         if PLAY_AGAINST:
             print("Play against mode enabled, alphabeta will be playing white.")
 
-        def check_game():
-            # Exit the game if one of the kings is dead
-            if self.chessboard.is_king_dead(Side.Black):
-                print(self.chessboard)
-                print("White wins!")
-                sys.exit(0)
-            elif self.chessboard.is_king_dead(Side.White):
-                print(self.chessboard)
-                print("Black wins!")
-                sys.exit(0)
-
         while True:
             print(self.chessboard)
+            self.check_game()
+
             if DEBUG:
                 # Print the legal moves ~ Merijn
                 print("Legal moves: {}".format(self.chessboard.legal_moves()))
@@ -573,11 +625,11 @@ class ChessGame:
 
             print("Current score: " + str(score))
 
-            print(ChessComputer.check_stalemate(self.chessboard, to_coordinate('e8')))
+            #print(ChessComputer.check_stalemate(self.chessboard, to_coordinate('e8')))
 
             if PLAY_AGAINST and self.chessboard.turn == Side.White:
                 move = self.make_computer_move()
-                check_game()
+                self.check_game()
 
             if not PLAY_AGAINST or PLAY_AGAINST_EASY:
                 # Calculate the best possible move
@@ -589,7 +641,7 @@ class ChessGame:
                 print("")
 
             self.make_human_move()
-            check_game()
+            self.check_game()
 
 
     def make_computer_move(self):
