@@ -4,7 +4,7 @@ import sys
 
 # GAME CONFIGURATION
 DEBUG = False
-PLAY_AGAINST = True 
+PLAY_AGAINST = False 
 PLAY_AGAINST_EASY = False
 
 ## Helper functions
@@ -364,7 +364,7 @@ class ChessComputer:
         v = -9999
         maxmove = ''
         for move in legal_moves:
-            (v, maxmove) = max((v, maxmove), (mini(chessboard.make_move(move), 3, alpha, beta), move))
+            (v, maxmove) = max((v, maxmove), (mini(chessboard.make_move(move), depth, alpha, beta), move))
 
         return (v, maxmove)
 
@@ -417,7 +417,7 @@ class ChessGame:
      
         # NOTE: you can make this depth higher once you have implemented
         # alpha-beta, which is more efficient
-        self.depth = 7
+        self.depth = 4000
         self.chessboard = ChessBoard(turn)
 
         # If a file was specified as commandline argument, use that filename
