@@ -566,6 +566,7 @@ class ChessGame:
             print("Current score: " + str(score))
 
             print(ChessComputer.check_stalemate(self.chessboard,(0,4)))
+
             if PLAY_AGAINST and self.chessboard.turn == Side.White:
                 move = self.make_computer_move()
                 check_game()
