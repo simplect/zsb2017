@@ -297,13 +297,19 @@ class ChessBoard:
     # It should return these moves as a list of move strings, e.g.
     # [c2c3, d4e5, f4f8]
     # TODO: write an implementation for this function
-    def legal_moves(self):
+    def legal_moves(self, opponent = False):
         legal_moves = []
         for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
             piece = self.get_boardpiece((x,y))
-
-            if piece is None or not piece.side == self.turn:
+             
+            if piece is None:
                 continue
+            if not opponent and not piece.side == self.turn:
+                continue
+            elif opponent and piece.side == self.turn:
+                continue
+
+
 
             if piece.material == 'p':
                 legal_moves += self.check_pawn(piece, (x,y))
@@ -398,9 +404,9 @@ class ChessComputer:
     @staticmethod
     def alphabeta(chessboard, depth, alpha, beta):
         legal_moves = chessboard.legal_moves()
-
+        
         def mini(chessboard, depth_left, alpha, beta):
-                v = 9999
+                v = 99999999
                 for move in chessboard.legal_moves():
                     v = min(v, maxi(chessboard.make_move(move), depth_left-1, alpha, beta))
 
@@ -414,17 +420,16 @@ class ChessComputer:
             if depth_left < 1:
                 return ChessComputer.evaluate_board(chessboard, depth_left)
             else:
-                v = -9999
+                v = -99999999
                 for move in chessboard.legal_moves():
                     v = max(v, mini(chessboard.make_move(move), depth_left-1, alpha, beta))
-
                     alpha = max(v, alpha)
                     if beta <= alpha:
                         break
 
                 return v
 
-        v = -9999
+        v = -9999999
         maxmove = ''
         for move in legal_moves:
             (v, maxmove) = max((v, maxmove), (mini(chessboard.make_move(move), depth, alpha, beta), move))
@@ -436,22 +441,38 @@ class ChessComputer:
     # Calculates the score of a given board configuration based on the 
     # material left on the board. Returns a score number, in which positive
     # means white is better off, while negative means black is better of
-    # NOTE: Most comments in here are ideas which are disabled :) ~ Merijn
     # TODO: Optimize this with depth_left
     @staticmethod
     def evaluate_board(chessboard, depth_left):
-        score = 0
+        scores = 0
+        pieces = {}
+
         for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
             piece = chessboard.get_boardpiece((x,y))
-
+            
             if piece is None:
                 continue
-            elif piece.side == chessboard.turn:
-                score += piece.score
-            else:
-                score -= piece.score
 
-        return score 
+            turn = 1 if piece.side == chessboard.turn else -1
+
+            if piece.material in pieces:
+                pieces[piece.material] = \
+                    ((pieces[piece.material] / piece.score) + turn) * piece.score
+            else:
+                    pieces[piece.material] = turn * piece.score
+            
+            # Check if king is in danger
+            if piece.material == 'k' and turn == 1:
+                legal_moves = chessboard.legal_moves(opponent=True)
+
+                for move in legal_moves:
+                    if (x,y) == to_coordinate(move[2:]):
+                        scores -= 100
+
+        for score in pieces.values():
+            scores += score
+
+        return scores
 
 
 # This class is responsible for starting the chess game, playing and user 
@@ -482,6 +503,18 @@ class ChessGame:
     def main(self):
         if PLAY_AGAINST:
             print("Play against mode enabled, alphabeta will be playing white.")
+
+        def check_game():
+            # Exit the game if one of the kings is dead
+            if self.chessboard.is_king_dead(Side.Black):
+                print(self.chessboard)
+                print("White wins!")
+                sys.exit(0)
+            elif self.chessboard.is_king_dead(Side.White):
+                print(self.chessboard)
+                print("Black wins!")
+                sys.exit(0)
+
         while True:
             print(self.chessboard)
             if DEBUG:
@@ -490,10 +523,12 @@ class ChessGame:
 
             # Print the current score
             score = ChessComputer.evaluate_board(self.chessboard,self.depth)
+
             print("Current score: " + str(score))
             
-            if PLAY_AGAINST and self.chessboard.turn == 0:
+            if PLAY_AGAINST and self.chessboard.turn == Side.White:
                 move = self.make_computer_move()
+                check_game()
 
             if not PLAY_AGAINST or PLAY_AGAINST_EASY:
                 # Calculate the best possible move
@@ -505,6 +540,7 @@ class ChessGame:
                 print("")
 
             self.make_human_move()
+            check_game()
 
 
     def make_computer_move(self):
@@ -515,16 +551,6 @@ class ChessGame:
 
         self.chessboard = self.chessboard.make_move(best_move)
         print(self.chessboard)
-
-        # Exit the game if one of the kings is dead
-        if self.chessboard.is_king_dead(Side.Black):
-            print(self.chessboard)
-            print("White wins!")
-            sys.exit(0)
-        elif self.chessboard.is_king_dead(Side.White):
-            print(self.chessboard)
-            print("Black wins!")
-            sys.exit(0)
 
     def make_human_move(self):
         # Endlessly request input until the right input is specified
@@ -542,15 +568,6 @@ class ChessGame:
 
         self.chessboard = self.chessboard.make_move(move)
 
-        # Exit the game if one of the kings is dead
-        if self.chessboard.is_king_dead(Side.Black):
-            print(self.chessboard)
-            print("White wins!")
-            sys.exit(0)
-        elif self.chessboard.is_king_dead(Side.White):
-            print(self.chessboard)
-            print("Black wins!")
-            sys.exit(0)
 
 chess_game = ChessGame(Side.White)
 chess_game.main()
