@@ -503,6 +503,9 @@ class ChessComputer:
     @staticmethod
     def check_stalemate(chessboard, location):
         piece = chessboard.get_boardpiece(location)
+        if not piece:
+            return False
+
         legal_moves_king = chessboard.check_king(piece, location)
 
         for move in legal_moves_king:
