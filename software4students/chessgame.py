@@ -490,6 +490,11 @@ class ChessComputer:
                     if (x,y) == to_coordinate(move[2:]):
                         scores -= 100
 
+                # Check stalemate
+                #if ChessComputer.check_stalemate(chessboard, (x, y)):
+                #    scores -= 100
+
+
         for score in pieces.values():
             scores += score
 
@@ -499,7 +504,7 @@ class ChessComputer:
     def check_stalemate(chessboard, location):
         piece = chessboard.get_boardpiece(location)
         legal_moves_king = chessboard.check_king(piece, location)
-        
+
         for move in legal_moves_king:
             place_king = to_coordinates(move)[1]
             capture_king = False
@@ -565,7 +570,7 @@ class ChessGame:
 
             print("Current score: " + str(score))
 
-            print(ChessComputer.check_stalemate(self.chessboard,(0,4)))
+            print(ChessComputer.check_stalemate(self.chessboard, to_coordinate('e8')))
 
             if PLAY_AGAINST and self.chessboard.turn == Side.White:
                 move = self.make_computer_move()
