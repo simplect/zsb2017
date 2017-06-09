@@ -448,9 +448,7 @@ class ChessComputer:
     @staticmethod
     def computer_move(chessboard, depth, alphabeta=False):
         if alphabeta:
-            inf = 99999999
-            min_inf = -inf
-            return ChessComputer.alphabeta(chessboard, depth, min_inf, inf)
+            return ChessComputer.alphabeta(chessboard, depth)
         else:
             return ChessComputer.minimax(chessboard, depth)
 
@@ -494,7 +492,7 @@ class ChessComputer:
     # NOTE: use ChessComputer.evaluate_board() to calculate the score
     # of a specific board configuration after the max depth is reached
     @staticmethod
-    def alphabeta(chessboard, depth, alpha, beta, cutoff=None):
+    def alphabeta(chessboard, depth, cutoff=None):
 
         def maxi(chessboard, depth, alpha, beta):
             if cutoff(depth, chessboard):
@@ -528,7 +526,7 @@ class ChessComputer:
         v = -9999999
         maxmove = ''
         legal_moves = chessboard.legal_moves()
-        cutoff = lambda x, y: x > depth 
+        cutoff = lambda x, y: x > depth or ChessComputer.is_endgame(y)
 
         for move in legal_moves:
             (v, maxmove) = max(
@@ -576,7 +574,7 @@ class ChessComputer:
 
         scores += 0.1 * (len(legal_moves) - len(opp_legal_moves))
 
-        #score += 100 * chessboard.is_stalemate()
+        #scores += 100 * chessboard.is_stalemate()
         return scores
         
     @staticmethod
@@ -596,7 +594,7 @@ class ChessGame:
      
         # NOTE: you can make this depth higher once you have implemented
         # alpha-beta, which is more efficient
-        self.depth = 20
+        self.depth = 100
         self.chessboard = ChessBoard(turn)
 
         # If a file was specified as commandline argument, use that filename
