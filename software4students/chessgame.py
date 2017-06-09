@@ -13,6 +13,7 @@ import sys
 DEBUG = False
 PLAY_AGAINST = False 
 PLAY_AGAINST_EASY = False
+AIVSAI = True
 
 ## Helper functions
 
@@ -58,7 +59,7 @@ class Material:
 class Side:
     White, Black = range(0,2)
 class Score:
-    Rook, King, Pawn, Knight, Queen, Bishop = [5, 10, 1, 3, 9, 3]
+    Rook, King, Pawn, Knight, Queen, Bishop = [5, 200, 1, 3, 9, 3]
 
 # A chesspiece on the board is specified by the side it belongs to and the type
 # of the chesspiece
@@ -71,6 +72,11 @@ class Piece:
 # A chess configuration is specified by whose turn it is and a 2d array
 # with all the pieces on the board
 class ChessBoard:
+
+    # Cache variables
+    cstalemate = None
+    clegal_moves = None
+    copp_moves = None
     
     def __init__(self, turn):
         # This variable is either equal to Side.White or Side.Black
@@ -237,7 +243,6 @@ class ChessBoard:
                 if check.side == piece.side:
                     continue
 
-
             legal_moves.append(to_move((x,y), (x + i, y + j)))
         return legal_moves
 
@@ -260,7 +265,6 @@ class ChessBoard:
                     legal_moves.append(to_move((x,y), (x+a*i, y+b*i)))
         return legal_moves
   
-    
     def check_knight(self, piece, location):
         legal_moves = []
         (x, y) = location
@@ -319,6 +323,9 @@ class ChessBoard:
         return legal_moves
 
     def is_stalemate(self):
+        if self.cstalemate:
+            return self.cstalemate
+
         king = None
         king_loc = None
 
@@ -329,12 +336,17 @@ class ChessBoard:
                 king_loc = location
 
                 legal_moves_king = self.check_king(king, king_loc)
+                if not legal_moves_king:
+                    return False
                 free_moves = []
+
                 if king.side == self.turn:
                     opponent = True
                 else:
                     opponent = False
+
                 opponent_moves = self.legal_moves(opponent=opponent)
+
                 """
                 print(legal_moves_king)
                 print(opponent_moves)
@@ -351,9 +363,12 @@ class ChessBoard:
                         free_moves.append(move)
 
                 if king and king.side == self.turn and not free_moves:
+                    self.cstalemate = -1
                     return -1
                 elif king and not free_moves:
+                    self.cstalemate = 1
                     return 1
+        self.cstalemate = 0
         return 0
 
     # This function should return, given the current board configuation and
@@ -362,6 +377,11 @@ class ChessBoard:
     # [c2c3, d4e5, f4f8]
     # TODO: write an implementation for this function
     def legal_moves(self, opponent = False):
+        if self.clegal_moves and not opponent:
+            return self.clegal_moves
+        elif self.copp_moves and opponent:
+            return self.copp_moves
+
         legal_moves = []
 
         if opponent:
@@ -396,16 +416,20 @@ class ChessBoard:
 
         if opponent:
             self.turn = Side.White if self.turn == Side.Black else Side.Black
+            self.copp_moves = legal_moves
+        else:
+            self.clegal_moves = legal_moves
 
         return legal_moves
     
 
     # This function should return, given the move specified (in the format
     # 'd2d3') whether this move is legal
-    # TODO: write an implementation for this function, implement it in terms
-    # of legal_moves()
     def is_legal_move(self, move):
-        legal_moves = self.legal_moves()
+        if self.clegal_moves:
+            legal_moves = self.clegal_moves
+        else:
+            legal_moves = self.legal_moves()
 
         if move not in legal_moves:
             return False
@@ -448,7 +472,7 @@ class ChessComputer:
                 return v
 
         def maxi(chessboard, depth_left):
-            if depth_left < 1:
+            if depth_left < 1 or ChessComputer.is_endgame(chessboard):
                 return ChessComputer.evaluate_board(chessboard, depth_left)
             else:
                 v = -9999
@@ -470,38 +494,46 @@ class ChessComputer:
     # NOTE: use ChessComputer.evaluate_board() to calculate the score
     # of a specific board configuration after the max depth is reached
     @staticmethod
-    def alphabeta(chessboard, depth, alpha, beta):
-        legal_moves = chessboard.legal_moves()
-        def mini(chessboard, depth_left, alpha, beta):
-            v = 99999999
-            for move in chessboard.legal_moves():
-                v = min(v, maxi(chessboard.make_move(move), depth_left-1, alpha, beta))
+    def alphabeta(chessboard, depth, alpha, beta, cutoff=None):
 
-                beta = min(v, beta)
-                if beta <= alpha:
+        def maxi(chessboard, depth, alpha, beta):
+            if cutoff(depth, chessboard):
+                return ChessComputer.evaluate_board(chessboard, depth)
+
+            v = -99999999
+            for move in chessboard.legal_moves():
+                v = max(v, mini(chessboard.make_move(move), depth+1, alpha, beta))
+                
+                if v >= beta:
                     break
 
+                alpha = max(v, alpha)
             return v
 
-        def maxi(chessboard, depth_left, alpha, beta):
-            if depth_left < 1:
-                return ChessComputer.evaluate_board(chessboard, depth_left)
-            else:
-                v = -99999999
-                for move in chessboard.legal_moves():
-                    v = max(v, mini(chessboard.make_move(move), depth_left-1, alpha, beta))
+        def mini(chessboard, depth, alpha, beta):
+            if cutoff(depth, chessboard):
+                return ChessComputer.evaluate_board(chessboard, depth)
 
-                    alpha = max(v, alpha)
-                    if beta <= alpha:
-                        break
+            v = 99999999
+            for move in chessboard.legal_moves():
+                v = min(v, maxi(chessboard.make_move(move), depth+1, alpha, beta))
 
-                return v
+                if v <= alpha:
+                    break
 
+                beta = min(v, beta)
+            return v
+
+        
         v = -9999999
         maxmove = ''
-        for move in legal_moves:
-            (v, maxmove) = max((v, maxmove), (mini(chessboard.make_move(move), depth - 1, alpha, beta), move))
+        legal_moves = chessboard.legal_moves()
+        cutoff = lambda x, y: x > depth 
 
+        for move in legal_moves:
+            (v, maxmove) = max(
+                    (v, maxmove),
+                    (mini(chessboard.make_move(move), 0, float('infinity'), float('-infinity')), move))
         return (v, maxmove)
 
 
@@ -509,11 +541,13 @@ class ChessComputer:
     # Calculates the score of a given board configuration based on the 
     # material left on the board. Returns a score number, in which positive
     # means white is better off, while negative means black is better of
-    # TODO: Optimize this with depth_left
     @staticmethod
-    def evaluate_board(chessboard, depth_left):
+    def evaluate_board(chessboard, depth):
         scores = 0
         pieces = {}
+
+        opp_legal_moves = chessboard.legal_moves(opponent=True)
+        legal_moves = chessboard.legal_moves()
 
         for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
             piece = chessboard.get_boardpiece((x,y))
@@ -531,39 +565,28 @@ class ChessComputer:
             
             # Check if king is in danger
             if piece.material == 'k' and turn == 1:
-                legal_moves = chessboard.legal_moves(opponent=True)
 
-                for move in legal_moves:
+                for move in opp_legal_moves:
                     if (x,y) == to_coordinate(move[2:]):
                         scores -= 100
 
-        for score in pieces.values():
-            scores += score
+        scores += sum(pieces.values()) 
+
+        scores += -1 * depth
+
+        scores += 0.1 * (len(legal_moves) - len(opp_legal_moves))
 
         #score += 100 * chessboard.is_stalemate()
-
         return scores
         
     @staticmethod
-    def check_stalemate(chessboard, location):
-        piece = chessboard.get_boardpiece(location)
-        if not piece:
-            return False
-
-        legal_moves_king = chessboard.check_king(piece, location)
-
-        for move in legal_moves_king:
-            place_king = to_coordinates(move)[1]
-            capture_king = False
-            for (x,y) in [(x,y) for x in range(8) for y in range(8)]:
-                if ChessBoard.is_legal_move(chessboard, to_move((x,y), place_king)):
-                    capture_king = True
-                    break
-            
-            if not capture_king:
-                return False
-
-        return True
+    def is_endgame(chessboard):
+        # Exit the game if one of the kings is dead
+        if chessboard.is_king_dead(Side.Black):
+            return True
+        elif chessboard.is_king_dead(Side.White):
+            return True
+        return False
 
 
 # This class is responsible for starting the chess game, playing and user 
@@ -573,7 +596,7 @@ class ChessGame:
      
         # NOTE: you can make this depth higher once you have implemented
         # alpha-beta, which is more efficient
-        self.depth = 3
+        self.depth = 20
         self.chessboard = ChessBoard(turn)
 
         # If a file was specified as commandline argument, use that filename
@@ -590,6 +613,7 @@ class ChessGame:
             content = f.read()
 
         self.chessboard.load_from_input(content)
+
     def check_game(self):
         # Exit the game if one of the kings is dead
         stale = self.chessboard.is_stalemate()
@@ -611,13 +635,26 @@ class ChessGame:
                 print("{} wins!"
                         .format("White" if self.chessboard.turn == Side.White else "Black"))
 
-
             sys.exit(0)
 
+    def resign(self):
+        print("{} Resigns!"
+                .format("White" if self.chessboard.turn == Side.White else "Black"))
+        sys.exit(0)
 
     def main(self):
         if PLAY_AGAINST:
             print("Play against mode enabled, alphabeta will be playing white.")
+
+        elif AIVSAI:
+            print("AI VS. AI mode enabled, enjoy watching alphabeta wrecking itself.")
+
+            while True:
+                print(self.chessboard)
+
+                self.check_game()
+
+                move = self.make_computer_move()
 
         while True:
             print(self.chessboard)
@@ -634,6 +671,8 @@ class ChessGame:
 
             if PLAY_AGAINST and self.chessboard.turn == Side.White:
                 move = self.make_computer_move()
+                print(self.chessboard)
+
                 self.check_game()
 
             if not PLAY_AGAINST or PLAY_AGAINST_EASY:
@@ -644,18 +683,21 @@ class ChessGame:
                 print("Best move: " + best_move)
                 print("Score to achieve: " + str(new_score))
                 print("")
-
+            
             self.make_human_move()
             self.check_game()
 
     def make_computer_move(self):
-        new_score, best_move = ChessComputer.computer_move(self.chessboard,
+        score, best_move = ChessComputer.computer_move(self.chessboard,
             self.depth, alphabeta=True)
 
-        print("White is playing {}".format(best_move))
+        if not best_move:
+            self.resign()
+
+        player = "White" if self.chessboard.turn == Side.White else "Black"
+        print("{} is playing {} with score {}".format(player, best_move, score))
 
         self.chessboard = self.chessboard.make_move(best_move)
-        print(self.chessboard)
 
     def make_human_move(self):
         # Endlessly request input until the right input is specified
