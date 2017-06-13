@@ -57,6 +57,12 @@ def board_position_to_cartesian(chessboard, position):
 
     return result
 
+
+
+
+
+
+
 def high_path(chessboard, from_pos, to_pos):
     '''
     Computes the high path that the arm can take to move a piece from one place on the board to another.
@@ -106,6 +112,13 @@ def high_path(chessboard, from_pos, to_pos):
     # Move to new position on SAFE height (And open the gripper)
 
     return sequence_list
+
+
+
+
+
+
+
 
 def move_to_garbage(chessboard, from_pos):
     '''
