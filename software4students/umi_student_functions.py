@@ -36,7 +36,8 @@ def apply_inverse_kinematics(x, y, z, gripper):
 
 
 def board_position_to_cartesian(chessboard, position):
-    ''' Convert a position between [a1-h8] to its cartesian coordinates in frameworld coordinates.
+    ''' Convert a position between [a1-h8] to its cartesian coordinates 
+        in frameworld coordinates.
 
         You are not allowed to use the functions such as: frame_to_world.
         You have to show actual calculations using positions/vectors and angles.
@@ -49,14 +50,28 @@ def board_position_to_cartesian(chessboard, position):
     # Get the local coordinates for the tiles on the board in the 0-7 range.
     (row, column) = to_coordinate(position)
 
-    # h8 is closes to the rotation point, row a[1-8] is furthest away from the robot arm.
+    chess_pos = chessboard.get_position()
+    chess_angle = chessboard.get_angle_radians()
 
-    # ????? Perform the calculations, also take a rotation and translation of the chessboard in account!
+    cos_theta = cos(chess_angle)
+    sin_theta = sin(chess_angle)
 
-    # Output the results.
-    result = (world_coordinate_x, world_coordinate_y, world_coordinate_z)
+    world_to_chess = array([
+                    [cos_theta, -sin_theta, 0, chess_pos[0]],
+                    [sin_theta, cos_theta, 0, chess_pos[1]],
+                    [0, 0, 1, chess_pos[2]],
+                    [0, 0, 0, 1]])
 
-    return result
+
+    chess_to_world = np.linalg.inv(world_to_chess)
+    chess_coord = array([8 - row + chessboard.field_size/2,
+                         8 - column + chessboard.field_size/2,
+                         0,
+                         1])
+    world_coordinate = dot(chess_to_world, np.transpose(chess_coord))
+
+    print(world_coordinate)
+    return tuple(world_coordinate[:3])
 
 
 def high_path(chessboard, from_pos, to_pos):

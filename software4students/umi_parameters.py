@@ -7,7 +7,7 @@ class UMI_parameters:
         # Specifications of UMI
         # Zed
         self.hpedestal = 1.0820
-        self.pedestal_offset = 0.675
+        self.pedestal_offset = 0.0675
         self.wpedestal = 0.1
 
         # Dimensions upper arm
@@ -34,9 +34,9 @@ class UMI_parameters:
             "Gripper"   : [0.0, 0.05]
         }
 
-        def correct_height(self, y):
-            '''
-            Function that corrects the y value of the umi-rtx, because the real arm runs from
-            from -self.hpedestal/2 to self.hpedestal/2, while y runs from 0 to self.hpedestal.
-            '''
-            return y - 0.5*self.hpedestal
+    def correct_height(self, y):
+        '''
+        Function that corrects the y value of the umi-rtx, because the real arm runs from
+        from -self.hpedestal/2 to self.hpedestal/2, while y runs from 0 to self.hpedestal.
+        '''
+        return y - 0.5*self.hpedestal
