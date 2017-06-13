@@ -97,3 +97,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+joints_simulator.txt
+joints.txt
