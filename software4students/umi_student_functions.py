@@ -50,6 +50,7 @@ def board_position_to_cartesian(chessboard, position):
     # Get the local coordinates for the tiles on the board in the 0-7 range.
     (row, column) = to_coordinate(position)
 
+
     chess_pos = chessboard.get_position()
     chess_angle = chessboard.get_angle_radians()
 
@@ -62,7 +63,9 @@ def board_position_to_cartesian(chessboard, position):
                     [0, 0, 1, chess_pos[2]],
                     [0, 0, 0, 1]])
 
+    real = chessboard.pieces['a1'][0].pos
     chess_to_world = np.linalg.inv(world_to_chess)
+    print(dot(world_to_chess, real))
 
     chess_coord = array([8 - row + chessboard.field_size/2,
                          8 - column + chessboard.field_size/2,
