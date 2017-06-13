@@ -50,7 +50,6 @@ def board_position_to_cartesian(chessboard, position):
     # Get the local coordinates for the tiles on the board in the 0-7 range.
     (row, column) = to_coordinate(position)
 
-
     chess_pos = chessboard.get_position()
     chess_angle = chessboard.get_angle_radians()
 
@@ -58,23 +57,30 @@ def board_position_to_cartesian(chessboard, position):
     sin_theta = sin(chess_angle)
 
     world_to_chess = array([
-                    [cos_theta, -sin_theta, 0, chess_pos[0]],
-                    [sin_theta, cos_theta, 0, chess_pos[1]],
-                    [0, 0, 1, chess_pos[2]],
+                    [cos_theta, 0,  sin_theta, chess_pos[0]],
+                    [0, 1, 0, chess_pos[1]],
+                    [-sin_theta, 0, cos_theta, chess_pos[2]],
                     [0, 0, 0, 1]])
 
-    real = chessboard.pieces['a1'][0].pos
     chess_to_world = np.linalg.inv(world_to_chess)
-    print(dot(world_to_chess, real))
 
-    chess_coord = array([8 - row + chessboard.field_size/2,
-                         8 - column + chessboard.field_size/2,
+    chess_coord = array([(7 - row) * chessboard.field_size + chessboard.field_size/2,
                          0,
+                         (7 - column) * chessboard.field_size + chessboard.field_size/2,
                          1])
-    
-    world_coordinate = dot(chess_to_world, np.transpose(chess_coord))
 
-    print(world_coordinate)
+    world_coordinate = dot(chess_to_world, chess_coord)
+
+    if position == 'a1':
+
+        real = chessboard.pieces['a1'][0].pos
+        print('wordtochess',world_to_chess)
+        print('chesstoworld', chess_to_world)
+        print('real', real)
+        print('real in chess', dot(world_to_chess, array([real[0], real[1], real[2], 1])))
+        print('chesscoords', chess_coord)    
+        print('result', world_coordinate)
+
     return tuple(world_coordinate[:3])
 
 
@@ -93,6 +99,7 @@ def high_path(chessboard, from_pos, to_pos):
     low_height = 0.1
 
     # Define half_piece height of a piece on the from position.
+
     piece = chessboard.pieces(from_pos)
     if piece.material == "p":
         half_piece_height = 0.025
