@@ -61,12 +61,13 @@ def board_position_to_cartesian(chessboard, position):
                     [0, 0, 1, chess_pos[2]],
                     [0, 0, 0, 1]])
 
-
     chess_to_world = np.linalg.inv(world_to_chess)
+
     chess_coord = array([8 - row + chessboard.field_size/2,
                          8 - column + chessboard.field_size/2,
                          0,
                          1])
+    
     world_coordinate = dot(chess_to_world, np.transpose(chess_coord))
 
     print(world_coordinate)
@@ -117,7 +118,7 @@ def high_path(chessboard, from_pos, to_pos):
     sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, chessboard.field_size))
 
     # Grip the piece
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, 0)
+    sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, 0))
 
     # Give instruction to GUI to pickup piece
     sequence_list.append(["GUI", "TAKE", from_pos])
