@@ -95,7 +95,8 @@ def moveGripper(value):
 
 def read_input_file(evt):
     """
-        Upon clicking the button, reads the input from the file, and executes the instructions.
+        Upon clicking the button, 
+        reads the input from the file, and executes the instructions.
     """
     joints_file = "joints_simulator.txt"
     if os.path.isfile(joints_file):
@@ -104,7 +105,8 @@ def read_input_file(evt):
 
 def store_input_text(evt):
     """
-        Upon clicking the button, reads the instruction in the textbox, and translates this to instruction for the
+        Upon clicking the button, 
+        reads the instruction in the textbox, and translates this to instruction for the
         robot arm to execute this action.
     """
     joints_file = "joints_simulator.txt"
@@ -249,7 +251,7 @@ floor.pos = (floor.length/2 - UMI.wpedestal, 0, 0)
 # CHESSBOARD
 # frame, board_size=0.3, position_x_z = (0.15, -0.15), angle_degrees=0)
 # <<<<<<<<<<-------------------------------------------------------------------- CHANGE BOARD POSITION/ANGLE HERE
-CHESSBOARD = UMI_chessboard(frameworld, 0.3, (0.15, -0.15), 0)
+CHESSBOARD = UMI_chessboard(frameworld, 0.3, (0.15, -0.15), 30)
 
 #***************************************************************************
 
