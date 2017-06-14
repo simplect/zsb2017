@@ -10,6 +10,7 @@ from copy import deepcopy
 from umi_parameters import UMI_parameters
 from umi_chessboard import UMI_chessboard
 from umi_student_functions import *
+from chessgame import ChessGame
 import numpy as np
 import os.path
 
@@ -103,6 +104,26 @@ def read_input_file(evt):
         (headers, sequence_list) = read_parameters_from_file(joints_file)
         execute_sequence(sequence_list)
 
+def play_chess(evt):
+    """
+        Starts a chess game
+    """
+    chess_game = ChessGame(0)
+    joints_file = "joints_simulator.txt"
+    print(chess_game.chessboard)
+    while chess_game.check_game(exit=False):
+         
+        input_text = chess_game.make_computer_move()
+        print(chess_game.chessboard)
+       
+        parameter_lines = move(CHESSBOARD, input_text[0:2], input_text[2:4])
+        write_parameters_to_file(parameter_lines, joints_file)
+        if os.path.isfile(joints_file):
+            (headers, sequence_list) = read_parameters_from_file(joints_file)
+            execute_sequence(sequence_list)
+
+
+
 def store_input_text(evt):
     """
         Upon clicking the button, 
@@ -160,6 +181,9 @@ s4_label = wx.StaticText(p, pos=(1.0*L,0.45*L), label='Set Gripper opening: 50 m
 
 read_input = wx.Button(p, label='Execute joints.txt', pos=(1.0*L,0.75*L))
 read_input.Bind(wx.EVT_BUTTON, read_input_file)
+
+read_input = wx.Button(p, label='Play chess for me', pos=(1.0*L,0.85*L))
+read_input.Bind(wx.EVT_BUTTON, play_chess)
 
 store_input = wx.Button(p, label='Compute High Path', pos=(1.11*L,0.65*L))
 store_input.Bind(wx.EVT_BUTTON, store_input_text)
@@ -251,7 +275,7 @@ floor.pos = (floor.length/2 - UMI.wpedestal, 0, 0)
 # CHESSBOARD
 # frame, board_size=0.3, position_x_z = (0.15, -0.15), angle_degrees=0)
 # <<<<<<<<<<-------------------------------------------------------------------- CHANGE BOARD POSITION/ANGLE HERE
-CHESSBOARD = UMI_chessboard(frameworld, 0.3, (0.15, -0.15), 0)
+CHESSBOARD = UMI_chessboard(frameworld, 0.3, (0.25, -0.25), 30)
 
 #***************************************************************************
 
