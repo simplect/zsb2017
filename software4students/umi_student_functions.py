@@ -51,7 +51,7 @@ def board_position_to_cartesian(chessboard, position):
     (row, column) = to_coordinate(position)
 
     chess_pos = chessboard.get_position()
-    chess_angle = chessboard.get_angle_radians()
+    chess_angle = -chessboard.get_angle_radians()
 
     cos_theta = cos(chess_angle)
     sin_theta = sin(chess_angle)
@@ -69,17 +69,18 @@ def board_position_to_cartesian(chessboard, position):
                          (7 - column) * chessboard.field_size + chessboard.field_size/2,
                          1])
 
-    world_coordinate = dot(chess_to_world, chess_coord)
-
+    world_coordinate = dot(world_to_chess, chess_coord)
+    """
+    Testing example
     if position == 'a1':
-
-        real = chessboard.pieces['a1'][0].pos
+        real = chessboard.framemp.frame_to_world(chessboard.pieces['a1'][0].pos)
         print('wordtochess',world_to_chess)
         print('chesstoworld', chess_to_world)
         print('real', real)
-        print('real in chess', dot(world_to_chess, array([real[0], real[1], real[2], 1])))
+        print('real in chess', dot(chess_to_world, array([real[0], real[1], real[2], 1])))
         print('chesscoords', chess_coord)    
-        print('result', world_coordinate)
+        print('result', world_coordinate[:3])
+    """
 
     return tuple(world_coordinate[:3])
 
