@@ -6,6 +6,7 @@ from umi_common import *
 import math
 import numpy as np
 from visual import *
+from scipy import optimize
 # Specifications of UMI
 # Enter the correct details in the corresponding file (umi_parameters.py).
 # <<<<<<<<<<-------------------------------------------------------------------- TODO FOR STUDENTS
@@ -26,9 +27,16 @@ def apply_inverse_kinematics(x, y, z, gripper):
     # Real arm runs from of 0 to 1.082
     riser_position = y + UMI.total_arm_height # (we want the gripper to be at the y position, but we can only influence the riser.)
 
+    umi = UMI_parameters()
+    to_solve = lambda t : [(umi.upper_length * cos(t[0]) + umi.lower_length * cos(t[0] + t[1])) - x,
+                           (umi.upper_length * sin(t[0]) + umi.lower_length * sin(t[0] + t[1])) - z]
+    
+    theta = optimize.root(to_solve, [1,1], method='hybr').x
+
     # Compute the resulting angles for each joint in DEGREES (you can use the degrees() function to convert radians).
-    elbow_angle = 0 # ????
-    shoulder_angle = 0 # ????
+    shoulder_angle = degrees(theta[0])
+    elbow_angle = degrees(theta[1])
+
     # We want the piece to be placed down in the same angle as we picked it up
     wrist_angle = 0 # ????
     # Gripper is not influenced by the kinematics, so one less variable for you to alter *yay*
