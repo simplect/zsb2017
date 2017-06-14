@@ -35,10 +35,24 @@ def apply_inverse_kinematics(x, y, z, gripper, board_angle):
 
     # (we want the gripper to be at the y position, but we can only influence the riser.)
     umi = UMI_parameters()
-    to_solve = lambda t : [(umi.upper_length * cos(t[0]) + umi.lower_length * cos(t[0] + t[1])) - x,
+
+    def to_solve(t):
+        """
+        if umi.joint_ranges["Shoulder"][0] > degrees(t[0]) or\
+           umi.joint_ranges["Shoulder"][1] < degrees(t[0]) or\
+           umi.joint_ranges["Elbow"][0] > degrees(t[1]) or\
+           umi.joint_ranges["Elbow"][1] < degrees(t[1]):
+            return [100000,100000]
+            """
+
+        return [(umi.upper_length * cos(t[0]) + umi.lower_length * cos(t[0] + t[1])) - x,
                            (umi.upper_length * sin(t[0]) + umi.lower_length * sin(t[0] + t[1])) - z]
     
-    theta = optimize.root(to_solve, [1,1], method='hybr').x
+    theta = optimize.root(to_solve, [1,1], method='hybr')
+    if not theta.success:
+        print("Could not find matching coords")
+    theta = theta.x
+
 
     # Compute the resulting angles for each joint in DEGREES (you can use the degrees() function to convert radians).
     shoulder_angle = degrees(theta[0])
