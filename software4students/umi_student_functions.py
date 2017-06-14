@@ -12,7 +12,7 @@ from scipy import optimize
 # <<<<<<<<<<-------------------------------------------------------------------- TODO FOR STUDENTS
 UMI = UMI_parameters()
 
-def apply_inverse_kinematics(x, y, z, gripper):
+def apply_inverse_kinematics(x, y, z, gripper, board_angle):
     ''' Computes the angles, given some real world coordinates
         :param float x: cartesian x-coordinate
         :param float y: cartesian y-coordinate
@@ -20,13 +20,20 @@ def apply_inverse_kinematics(x, y, z, gripper):
 
         :return: Returns the a tuple containing the position and angles of the robot-arm joints.
     '''
-    # Implementation is based on the Robotics readers made by Leo.
-    # TIP: If you want to know at all times, what the current x,y,z of your robot-arm is,
-    # Read the other TIP at the bottom of the umi_simulation file.
     
     # Real arm runs from of 0 to 1.082
-    riser_position = y + UMI.total_arm_height # (we want the gripper to be at the y position, but we can only influence the riser.)
+    riser_position = y + UMI.total_arm_height 
+    """
+        self.joint_ranges = {
+            "Riser"     : [0.3625, 0.925],
+            "Shoulder"  : [-90.0, 90.0],
+            "Elbow"     : [-180.0, 110.0],
+            "Wrist"     : [-110.0, 110.0],
+            "Gripper"   : [0.0, 0.05]
+        }
+    """
 
+    # (we want the gripper to be at the y position, but we can only influence the riser.)
     umi = UMI_parameters()
     to_solve = lambda t : [(umi.upper_length * cos(t[0]) + umi.lower_length * cos(t[0] + t[1])) - x,
                            (umi.upper_length * sin(t[0]) + umi.lower_length * sin(t[0] + t[1])) - z]
@@ -38,7 +45,8 @@ def apply_inverse_kinematics(x, y, z, gripper):
     elbow_angle = degrees(theta[1])
 
     # We want the piece to be placed down in the same angle as we picked it up
-    wrist_angle = 180 - shoulder_angle - elbow_angle
+    wrist_angle = 180 - shoulder_angle - elbow_angle + board_angle
+
     # Gripper is not influenced by the kinematics, so one less variable for you to alter *yay*
     return (riser_position, shoulder_angle, elbow_angle, wrist_angle, gripper)
 
@@ -113,43 +121,44 @@ def high_path(chessboard, from_pos, to_pos):
     
     # Define piece width to grip a piece
     piece_width = 0.7*chessboard.field_size
+    board_angle = chessboard.get_angle_degrees()
 
     # Get the coordinates.
     (from_x, from_y, from_z) = board_position_to_cartesian(chessboard, from_pos)
     (to_x, to_y, to_z) = board_position_to_cartesian(chessboard, to_pos)
 
     # Hover above the first field on SAFE height:
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + safe_height, from_z, chessboard.field_size))
+    sequence_list.append(apply_inverse_kinematics(from_x, from_y + safe_height, from_z, chessboard.field_size, board_angle))
 
     # Hover above the first field on LOW height:
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + low_height, from_z, chessboard.field_size)) 
+    sequence_list.append(apply_inverse_kinematics(from_x, from_y + low_height, from_z, chessboard.field_size, board_angle))
 
     # Hover above the first field on half of the piece height:
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, chessboard.field_size))
+    sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, chessboard.field_size, board_angle))
 
     # Grip the piece
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, piece_width))
+    sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, piece_width, board_angle))
 
     # Give instruction to GUI to pickup piece
     sequence_list.append(["GUI", "TAKE", from_pos])
 
     # Hover above the first field on SAFE height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + safe_height, from_z, piece_width))
+    sequence_list.append(apply_inverse_kinematics(from_x, from_y + safe_height, from_z, piece_width, board_angle))
 
     # Move to new position on SAFE height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + safe_height, to_z, piece_width))
+    sequence_list.append(apply_inverse_kinematics(to_x, to_y + safe_height, to_z, piece_width, board_angle))
 
     # Hover above the new field on LOW height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + low_height, to_z, piece_width))
+    sequence_list.append(apply_inverse_kinematics(to_x, to_y + low_height, to_z, piece_width, board_angle))
 
     # Hover above the new field on half of the piece height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + half_piece_height, to_z, piece_width))
+    sequence_list.append(apply_inverse_kinematics(to_x, to_y + half_piece_height, to_z, piece_width, board_angle))
 
     # Give instruction to GUI to drop piece
     sequence_list.append(["GUI", "DROP", to_pos])
 
     # Move to new position on SAFE height and open the gripper:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + safe_height, to_z, chessboard.field_size))
+    sequence_list.append(apply_inverse_kinematics(to_x, to_y + safe_height, to_z, chessboard.field_size, board_angle))
 
     return sequence_list
 
