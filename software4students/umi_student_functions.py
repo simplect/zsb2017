@@ -100,15 +100,11 @@ def high_path(chessboard, from_pos, to_pos):
     low_height = 0.1
 
     # Define half_piece height of a piece on the from position.
-    piece = chessboard.pieces[from_pos][0]
-    if piece == "p":
-        half_piece_height = 0.025
-    elif piece == "k":
-        half_piece_height = 0.035
-    elif piece == "r":
-        half_piece_height = 0.03
-    else:
-        half_piece_height = 0.03
+    piece = chessboard.pieces[from_pos][1]
+    half_piece_height = 0.5*chessboard.pieces_height[piece]
+    
+    # Define piece width to grip a piece
+    piece_width = 0.7*chessboard.field_size
 
     # Get the coordinates.
     (from_x, from_y, from_z) = board_position_to_cartesian(chessboard, from_pos)
@@ -124,22 +120,22 @@ def high_path(chessboard, from_pos, to_pos):
     sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, chessboard.field_size))
 
     # Grip the piece
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, 0))
+    sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, piece_width))
 
     # Give instruction to GUI to pickup piece
     sequence_list.append(["GUI", "TAKE", from_pos])
 
     # Hover above the first field on SAFE height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + safe_height, from_z, 0))
+    sequence_list.append(apply_inverse_kinematics(from_x, from_y + safe_height, from_z, piece_width))
 
     # Move to new position on SAFE height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + safe_height, to_z, 0))
+    sequence_list.append(apply_inverse_kinematics(to_x, to_y + safe_height, to_z, piece_width))
 
     # Hover above the new field on LOW height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + low_height, to_z, 0))
+    sequence_list.append(apply_inverse_kinematics(to_x, to_y + low_height, to_z, piece_width))
 
     # Hover above the new field on half of the piece height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + half_piece_height, to_z, 0))
+    sequence_list.append(apply_inverse_kinematics(to_x, to_y + half_piece_height, to_z, piece_width))
 
     # Give instruction to GUI to drop piece
     sequence_list.append(["GUI", "DROP", to_pos])
