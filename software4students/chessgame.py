@@ -511,7 +511,7 @@ class ChessComputer:
             if cutoff(depth, chessboard):
                 return ChessComputer.evaluate_board(chessboard, depth)
 
-            v = -math.inf
+            v = -float('inf')
             for move in chessboard.legal_moves():
                 v = max(v, mini(chessboard.make_move(move), depth+1, alpha, beta))
                 
@@ -523,7 +523,7 @@ class ChessComputer:
 
         def mini(chessboard, depth, alpha, beta):
 
-            v = math.inf
+            v = float('inf')
             for move in chessboard.legal_moves():
                 v = min(v, maxi(chessboard.make_move(move), depth+1, alpha, beta))
 
@@ -534,7 +534,7 @@ class ChessComputer:
             return v
 
         
-        v = -math.inf
+        v = -float('inf')
         maxmove = ''
         legal_moves = chessboard.legal_moves()
         # Enable the following when on a supercomputer
@@ -544,7 +544,7 @@ class ChessComputer:
         for move in legal_moves:
             (v, maxmove) = max(
                     (v, maxmove),
-                    (mini(chessboard.make_move(move), 0, -math.inf, math.inf), move))
+                    (mini(chessboard.make_move(move), 0, -float('inf'), float('inf')), move))
         return (v, maxmove)
 
 
@@ -636,17 +636,21 @@ class ChessGame:
 
         self.chessboard.load_from_input(content)
 
-    def check_game(self):
+    def check_game(self, exit=True):
         # Exit the game if one of the kings is dead
+        if exit:
+            returnfunc = lambda x: sys.exit(0)
+        else:
+            returnfunc = lambda x: False
         stale = self.chessboard.is_stalemate()
         if self.chessboard.is_king_dead(Side.Black):
             print(self.chessboard)
             print("White wins!")
-            sys.exit(0)
+            return returnfunc
         elif self.chessboard.is_king_dead(Side.White):
             print(self.chessboard)
             print("Black wins!")
-            sys.exit(0)
+            return returnfunc
         elif stale != 0:
             print(self.chessboard)
             print("(almost) Stalemate!")
@@ -657,7 +661,8 @@ class ChessGame:
                 print("{} wins!"
                         .format("White" if self.chessboard.turn == Side.White else "Black"))
 
-            sys.exit(0)
+            return returnfunc
+        return True
 
     def resign(self):
         print("{} Resigns!"
@@ -721,6 +726,8 @@ class ChessGame:
 
         self.chessboard = self.chessboard.make_move(best_move)
 
+        return best_move
+
     def make_human_move(self):
         # Endlessly request input until the right input is specified
         while True:
@@ -737,7 +744,7 @@ class ChessGame:
 
         self.chessboard = self.chessboard.make_move(move)
 
-
-chess_game = ChessGame(Side.White)
-chess_game.main()
+if __name__ == "__main__":
+    chess_game = ChessGame(Side.White)
+    chess_game.main()
 
