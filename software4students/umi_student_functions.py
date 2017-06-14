@@ -37,16 +37,14 @@ def apply_inverse_kinematics(x, y, z, gripper, board_angle):
     umi = UMI_parameters()
 
     def to_solve(t):
-        """
         if umi.joint_ranges["Shoulder"][0] > degrees(t[0]) or\
            umi.joint_ranges["Shoulder"][1] < degrees(t[0]) or\
            umi.joint_ranges["Elbow"][0] > degrees(t[1]) or\
            umi.joint_ranges["Elbow"][1] < degrees(t[1]):
             return [100000,100000]
-            """
 
-        return [(umi.upper_length * cos(t[0]) + umi.lower_length * cos(t[0] + t[1])) - x,
-                           (umi.upper_length * sin(t[0]) + umi.lower_length * sin(t[0] + t[1])) - z]
+        return [((umi.upper_length * cos(t[0]) + umi.lower_length * cos(t[0] + t[1])) - x),
+                           ((umi.upper_length * sin(t[0]) + umi.lower_length * sin(t[0] + t[1])) - z)]
     
     theta = optimize.root(to_solve, [1,1], method='hybr')
     if not theta.success:
