@@ -47,12 +47,8 @@ def board_position_to_cartesian(chessboard, position):
     ''' Convert a position between [a1-h8] to its cartesian coordinates 
         in frameworld coordinates.
 
-        You are not allowed to use the functions such as: frame_to_world.
-        You have to show actual calculations using positions/vectors and angles.
-
         :param obj chessboard: The instantiation of the chessboard that you wish to use.
         :param str position: A position in the range [a1-h8]
-
         :return: tuple Return a position in the format (x,y,z)
     '''
     # Get the local coordinates for the tiles on the board in the 0-7 range.
@@ -78,18 +74,6 @@ def board_position_to_cartesian(chessboard, position):
                          1])
 
     world_coordinate = dot(world_to_chess, chess_coord)
-    """
-    Testing example
-    if position == 'a1':
-        real = chessboard.framemp.frame_to_world(chessboard.pieces['a1'][0].pos)
-        print('wordtochess',world_to_chess)
-        print('chesstoworld', chess_to_world)
-        print('real', real)
-        print('real in chess', dot(chess_to_world, array([real[0], real[1], real[2], 1])))
-        print('chesscoords', chess_coord)    
-        print('result', world_coordinate[:3])
-    """
-
     return tuple(world_coordinate[:3])
 
 
