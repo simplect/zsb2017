@@ -38,7 +38,7 @@ def apply_inverse_kinematics(x, y, z, gripper):
     elbow_angle = degrees(theta[1])
 
     # We want the piece to be placed down in the same angle as we picked it up
-    wrist_angle = 0 # ????
+    wrist_angle = 180 - shoulder_angle - elbow_angle
     # Gripper is not influenced by the kinematics, so one less variable for you to alter *yay*
     return (riser_position, shoulder_angle, elbow_angle, wrist_angle, gripper)
 
