@@ -99,7 +99,7 @@ def high_path(chessboard, from_pos, to_pos):
     low_height = 0.1
 
     # Define half_piece height of a piece on the from position.
-    piece = chessboard.pieces[from_pos]
+    piece = chessboard.pieces[from_pos][0]
     if piece == "p":
         half_piece_height = 0.025
     elif piece == "k":
