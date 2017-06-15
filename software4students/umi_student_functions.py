@@ -12,7 +12,7 @@ from scipy import optimize
 # <<<<<<<<<<-------------------------------------------------------------------- TODO FOR STUDENTS
 UMI = UMI_parameters()
 
-def apply_inverse_kinematics(x, y, z, gripper, board_angle):
+def apply_inverse_kinematics(x, y, z, gripper, board_angle, rest_state=False):
     ''' Computes the angles, given some real world coordinates
         :param float x: cartesian x-coordinate
         :param float y: cartesian y-coordinate
@@ -20,23 +20,17 @@ def apply_inverse_kinematics(x, y, z, gripper, board_angle):
 
         :return: Returns the a tuple containing the position and angles of the robot-arm joints.
     '''
-    
     # Real arm runs from of 0 to 1.082
     riser_position = y + UMI.total_arm_height 
-    """
-        self.joint_ranges = {
-            "Riser"     : [0.3625, 0.925],
-            "Shoulder"  : [-90.0, 90.0],
-            "Elbow"     : [-180.0, 110.0],
-            "Wrist"     : [-110.0, 110.0],
-            "Gripper"   : [0.0, 0.05]
-        }
-    """
 
+    if rest_state == True:
+        return (riser_position, 0, 0, 0, gripper)
+   
     # (we want the gripper to be at the y position, but we can only influence the riser.)
     umi = UMI_parameters()
 
     def to_solve(t):
+        # Make sure the angles are in the allowed ranges
         if umi.joint_ranges["Shoulder"][0] > degrees(t[0]) or\
            umi.joint_ranges["Shoulder"][1] < degrees(t[0]) or\
            umi.joint_ranges["Elbow"][0] > degrees(t[1]) or\
@@ -45,10 +39,13 @@ def apply_inverse_kinematics(x, y, z, gripper, board_angle):
 
         return [((umi.upper_length * cos(t[0]) + umi.lower_length * cos(t[0] + t[1])) - x),
                            ((umi.upper_length * sin(t[0]) + umi.lower_length * sin(t[0] + t[1])) - z)]
-    
+    # Solve the angles using the hybr algorithm 
     theta = optimize.root(to_solve, [1,1], method='hybr')
+    # The angles do not exists for all board locations
+    # 
     if not theta.success:
         print("Could not find matching coords")
+
     theta = theta.x
 
 
@@ -58,6 +55,9 @@ def apply_inverse_kinematics(x, y, z, gripper, board_angle):
 
     # We want the piece to be placed down in the same angle as we picked it up
     wrist_angle = 180 - shoulder_angle - elbow_angle + board_angle
+
+    # Reduce the wrist angle, this should usually be in the wrist's range
+    wrist_angle = wrist_angle - round(wrist_angle/180) * 180
 
     # Gripper is not influenced by the kinematics, so one less variable for you to alter *yay*
     return (riser_position, shoulder_angle, elbow_angle, wrist_angle, gripper)
@@ -94,6 +94,7 @@ def board_position_to_cartesian(chessboard, position):
                          1])
 
     world_coordinate = dot(world_to_chess, chess_coord)
+
     return tuple(world_coordinate[:3])
 
 
@@ -154,7 +155,7 @@ def high_path(chessboard, from_pos, to_pos):
     sequence_list.append(["GUI", "DROP", to_pos])
 
     # Move to new position on SAFE height and open the gripper:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + safe_height, to_z, chessboard.field_size, board_angle))
+    sequence_list.append(apply_inverse_kinematics(to_x, to_y + safe_height, to_z, chessboard.field_size, board_angle, rest_state=True))
 
     return sequence_list
 
