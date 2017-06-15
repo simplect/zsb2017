@@ -24,7 +24,7 @@ def apply_inverse_kinematics(x, y, z, gripper, board_angle, rest_state=False):
     riser_position = y + UMI.total_arm_height 
 
     if rest_state == True:
-        return (riser_position, 0, 0, 0, gripper)
+        return (riser_position, 0, 0, -90, gripper)
    
     # (we want the gripper to be at the y position, but we can only influence the riser.)
     umi = UMI_parameters()
@@ -48,16 +48,14 @@ def apply_inverse_kinematics(x, y, z, gripper, board_angle, rest_state=False):
 
     theta = theta.x
 
-
-    # Compute the resulting angles for each joint in DEGREES (you can use the degrees() function to convert radians).
     shoulder_angle = degrees(theta[0])
     elbow_angle = degrees(theta[1])
 
     # We want the piece to be placed down in the same angle as we picked it up
-    wrist_angle = 180 - shoulder_angle - elbow_angle + board_angle
+    wrist_angle = -shoulder_angle - elbow_angle + board_angle
 
     # Reduce the wrist angle, this should usually be in the wrist's range
-    wrist_angle = wrist_angle - round(wrist_angle/180) * 180
+    #wrist_angle = wrist_angle - round(wrist_angle/180) * 180
 
     # Gripper is not influenced by the kinematics, so one less variable for you to alter *yay*
     return (riser_position, shoulder_angle, elbow_angle, wrist_angle, gripper)
@@ -119,6 +117,7 @@ def high_path(chessboard, from_pos, to_pos):
     # Define piece width to grip a piece
     piece_width = 0.7*chessboard.field_size
     board_angle = chessboard.get_angle_degrees()
+
 
     # Get the coordinates.
     (from_x, from_y, from_z) = board_position_to_cartesian(chessboard, from_pos)
