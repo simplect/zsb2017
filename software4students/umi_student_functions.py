@@ -12,16 +12,22 @@ import math
 import numpy as np
 from visual import *
 from scipy import optimize
+
 # Specifications of UMI
 UMI = UMI_parameters()
 
 def apply_inverse_kinematics(x, y, z, gripper, board_angle, rest_state=False):
-    ''' Computes the angles, given some real world coordinates
+    ''' 
+        Computes the angles, given some real world coordinates
+
         :param float x: cartesian x-coordinate
         :param float y: cartesian y-coordinate
         :param float z: cartesian z-coordinate
+        :param float gripper: width of opening of the gripper
+        :param float board_angle: chessboard angle
+        :param boolean rest_state: states if the arm is currently doing a move
 
-        :return: Returns the a tuple containing the position and angles of the robot-arm joints.
+        :return: a tuple containing the position and angles of the robot-arm joints.
     '''
     # Real arm runs from of 0 to 1.082
     riser_position = y + UMI.total_arm_height 
@@ -38,7 +44,7 @@ def apply_inverse_kinematics(x, y, z, gripper, board_angle, rest_state=False):
             return [100000,100000]
 
         return [((UMI.upper_length * cos(t[0]) + UMI.lower_length * cos(t[0] + t[1])) - x),
-                           ((UMI.upper_length * sin(t[0]) + UMI.lower_length * sin(t[0] + t[1])) - z)]
+                ((UMI.upper_length * sin(t[0]) + UMI.lower_length * sin(t[0] + t[1])) - z)]
 
     # Solve the angles using the hybr algorithm 
     theta = optimize.root(to_solve, [1,1], method='hybr')
@@ -57,48 +63,59 @@ def apply_inverse_kinematics(x, y, z, gripper, board_angle, rest_state=False):
     return (riser_position, shoulder_angle, elbow_angle, wrist_angle, gripper)
 
 
+
 def board_position_to_cartesian(chessboard, position):
-    ''' Convert a position between [a1-h8] to its cartesian coordinates 
+    ''' 
+        Convert a position between [a1-h8] to its cartesian coordinates 
         in frameworld coordinates.
 
-        :param obj chessboard: The instantiation of the chessboard that you wish to use.
+        :param obj chessboard: The instantiation of the chessboard that is used
         :param str position: A position in the range [a1-h8]
+
         :return: tuple Return a position in the format (x,y,z)
     '''
     # Get the local coordinates for the tiles on the board in the 0-7 range.
     (row, column) = to_coordinate(position)
 
+    # Get information of chessboard
     chess_pos = chessboard.get_position()
     chess_angle = -chessboard.get_angle_radians()
 
     cos_theta = cos(chess_angle)
     sin_theta = sin(chess_angle)
 
+    # Transformation matrix
     world_to_chess = array([
                     [cos_theta, 0,  sin_theta, chess_pos[0]],
                     [0, 1, 0, chess_pos[1]],
                     [-sin_theta, 0, cos_theta, chess_pos[2]],
                     [0, 0, 0, 1]])
 
+    # Computes coordinates with respect to chessboard
     chess_coord = array([(7 - row) * chessboard.field_size + chessboard.field_size/2,
                          0,
                          (7 - column) * chessboard.field_size + chessboard.field_size/2,
                          1])
 
+    # Computes coordinates with respect to world
     world_coordinate = dot(world_to_chess, chess_coord)
 
     return tuple(world_coordinate[:3])
 
 
+
 def high_path(chessboard, from_pos, to_pos):
-    '''
-    Computes the high path that the arm can take to move a piece from one place on the board to another.
-    :param chessboard: Chessboard object
-    :param from_pos: [a1-h8]
-    :param to_pos: [a1-h8]
-    :return: Returns a list of instructions for the GUI.
+    ''' 
+        Computes high path for the arm to move a piece between positions on the board.
+
+        :param chessboard: Chessboard object
+        :param from_pos: [a1-h8]
+        :param to_pos: [a1-h8]
+        
+        :return: Returns a list of instructions for the GUI.
     '''
     sequence_list = []
+
     # We assume that 20 centimeter above the board is safe.
     safe_height = 0.2
     # We assume that 10 centimeter above the board is "low".
@@ -112,54 +129,91 @@ def high_path(chessboard, from_pos, to_pos):
     piece_width = 0.7*chessboard.field_size
     board_angle = chessboard.get_angle_degrees()
 
-
     # Get the coordinates.
     (from_x, from_y, from_z) = board_position_to_cartesian(chessboard, from_pos)
     (to_x, to_y, to_z) = board_position_to_cartesian(chessboard, to_pos)
+    
+    add_next = lambda x, y, z, gripper, rest_state = False: \
+        sequence_list.append(apply_inverse_kinematics(x, y, z, gripper, board_angle, rest_state))
 
     # Hover above the first field on SAFE height:
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + safe_height, from_z, chessboard.field_size, board_angle))
+    add_next(from_x, 
+             from_y + safe_height, 
+             from_z, 
+             chessboard.field_size) 
 
     # Hover above the first field on LOW height:
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + low_height, from_z, chessboard.field_size, board_angle))
+    add_next(from_x,
+             from_y + low_height, 
+             from_z, 
+             chessboard.field_size)
 
     # Hover above the first field on half of the piece height:
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, chessboard.field_size, board_angle))
+    add_next(from_x,
+             from_y + half_piece_height, 
+             from_z, 
+             chessboard.field_size)
 
     # Grip the piece
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + half_piece_height, from_z, piece_width, board_angle))
+    add_next(from_x,
+             from_y + half_piece_height,
+             from_z,
+             piece_width)
 
     # Give instruction to GUI to pickup piece
     sequence_list.append(["GUI", "TAKE", from_pos])
 
     # Hover above the first field on SAFE height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(from_x, from_y + safe_height, from_z, piece_width, board_angle))
+    add_next(from_x,
+             from_y + safe_height,
+             from_z, 
+             piece_width)
 
     # Move to new position on SAFE height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + safe_height, to_z, piece_width, board_angle))
+    add_next(to_x,
+             to_y + safe_height, 
+             to_z,
+             piece_width)
 
     # Hover above the new field on LOW height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + low_height, to_z, piece_width, board_angle))
+    add_next(to_x,
+             to_y + low_height,
+             to_z, 
+             piece_width) 
 
     # Hover above the new field on half of the piece height keeping gripper closed:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + half_piece_height, to_z, piece_width, board_angle))
+    add_next(to_x,
+             to_y + half_piece_height, 
+             to_z, 
+             piece_width)
 
     # Give instruction to GUI to drop piece
     sequence_list.append(["GUI", "DROP", to_pos])
 
     # Move to new position on SAFE height and open the gripper:
-    sequence_list.append(apply_inverse_kinematics(to_x, to_y + safe_height, to_z, chessboard.field_size, board_angle, rest_state=True))
+    add_next(to_x, 
+             to_y + safe_height, 
+             to_z, 
+             chessboard.field_size)
+
+    # Move to 
+    add_next(0, 
+             to_y + safe_height, 
+             0, 
+             0, 
+             rest_state=True)
 
     return sequence_list
 
 
 def move_to_garbage(chessboard, from_pos):
     '''
-        Computes the high path that the arm can take to move a piece from a position to the garbage location.
+        Computes high path for arm to move a piece from position to the garbage.
+
         :param chessboard: Chessboard object
         :param from_pos: [a1-h8]
+
         :return: Returns a list of instructions for the GUI.
     '''
     drop_location = "j5"
-    print(32 - len(chessboard.pieces))
     return high_path(chessboard, from_pos, drop_location)
