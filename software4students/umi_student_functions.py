@@ -1,4 +1,9 @@
-#!python2
+# umi_student_functions.py 
+# In this file, we implemented the movements of the UMI RTX robotic arm  
+# Babette Mooij, 10740414
+# Merijn Terstroote, 11173106
+# Groep D
+# 16-06-2017
 
 from __future__ import division, print_function
 from umi_parameters import UMI_parameters
@@ -8,8 +13,6 @@ import numpy as np
 from visual import *
 from scipy import optimize
 # Specifications of UMI
-# Enter the correct details in the corresponding file (umi_parameters.py).
-# <<<<<<<<<<-------------------------------------------------------------------- TODO FOR STUDENTS
 UMI = UMI_parameters()
 
 def apply_inverse_kinematics(x, y, z, gripper, board_angle, rest_state=False):
@@ -26,38 +29,31 @@ def apply_inverse_kinematics(x, y, z, gripper, board_angle, rest_state=False):
     if rest_state == True:
         return (riser_position, 0, 0, -90, gripper)
    
-    # (we want the gripper to be at the y position, but we can only influence the riser.)
-    umi = UMI_parameters()
-
     def to_solve(t):
         # Make sure the angles are in the allowed ranges
-        if umi.joint_ranges["Shoulder"][0] > degrees(t[0]) or\
-           umi.joint_ranges["Shoulder"][1] < degrees(t[0]) or\
-           umi.joint_ranges["Elbow"][0] > degrees(t[1]) or\
-           umi.joint_ranges["Elbow"][1] < degrees(t[1]):
+        if UMI.joint_ranges["Shoulder"][0] > degrees(t[0]) or\
+           UMI.joint_ranges["Shoulder"][1] < degrees(t[0]) or\
+           UMI.joint_ranges["Elbow"][0] > degrees(t[1]) or\
+           UMI.joint_ranges["Elbow"][1] < degrees(t[1]):
             return [100000,100000]
 
-        return [((umi.upper_length * cos(t[0]) + umi.lower_length * cos(t[0] + t[1])) - x),
-                           ((umi.upper_length * sin(t[0]) + umi.lower_length * sin(t[0] + t[1])) - z)]
+        return [((UMI.upper_length * cos(t[0]) + UMI.lower_length * cos(t[0] + t[1])) - x),
+                           ((UMI.upper_length * sin(t[0]) + UMI.lower_length * sin(t[0] + t[1])) - z)]
+
     # Solve the angles using the hybr algorithm 
     theta = optimize.root(to_solve, [1,1], method='hybr')
+
     # The angles do not exists for all board locations
-    # 
     if not theta.success:
         print("Could not find matching coords")
 
     theta = theta.x
-
     shoulder_angle = degrees(theta[0])
     elbow_angle = degrees(theta[1])
 
     # We want the piece to be placed down in the same angle as we picked it up
     wrist_angle = -shoulder_angle - elbow_angle + board_angle
 
-    # Reduce the wrist angle, this should usually be in the wrist's range
-    #wrist_angle = wrist_angle - round(wrist_angle/180) * 180
-
-    # Gripper is not influenced by the kinematics, so one less variable for you to alter *yay*
     return (riser_position, shoulder_angle, elbow_angle, wrist_angle, gripper)
 
 
