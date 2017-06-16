@@ -37,7 +37,8 @@ class UMI_parameters:
 
     def correct_height(self, y):
         '''
-        Function that corrects the y value of the umi-rtx, because the real arm runs from
-        from -self.hpedestal/2 to self.hpedestal/2, while y runs from 0 to self.hpedestal.
+        Function that corrects the y value of the umi-rtx, because the real
+        arm runs from -self.hpedestal/2 to self.hpedestal/2, while y runs 
+        from 0 to self.hpedestal.
         '''
         return y - 0.5*self.hpedestal
