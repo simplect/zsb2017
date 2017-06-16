@@ -1,9 +1,23 @@
 # umi_student_functions.py 
 # In this file, we implemented the movements of the UMI RTX robotic arm  
 # Babette Mooij, 10740414
-# Merijn Terstroote, 11173106
+# Merijn Testroote, 11173106
 # Groep D
 # 16-06-2017
+
+"""
+For this project we have implemented inverse kinematics in order to
+let the robot arm reach the correct places. In this process
+we discovered that the arm cannot reach a multitude of places on the 
+chessboard in default position (0.15,-0.15, 0) such as A8. 
+We have translated the board to (0.25, -0.25) in order to show a full reach,
+we also rotated the board by 30 degrees to show the completeness of the 
+reverse kinematica and translation functions. In the umi_simulation.py file we added a
+"Play chess" button, this starts the process of playing chess through the interface we have developed last week. Note: The play chess process is AI vs AI.
+During the move calculation the interace is unresponsive, we also noted that the 
+game can be watched for multiple hours but at other configurations crashes after some time.
+The play chess is thus a beta/fun feature.
+"""
 
 from __future__ import division, print_function
 from umi_parameters import UMI_parameters

@@ -1,5 +1,11 @@
 #!python2
 
+# umi_parameters.py
+# Babette Mooij, 10740414
+# Merijn Testroote, 11173106
+# Groep D
+# 16-06-2017
+
 from __future__ import division, print_function
 
 class UMI_parameters:
