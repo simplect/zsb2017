@@ -84,8 +84,6 @@ def board_position_to_cartesian(chessboard, position):
                     [-sin_theta, 0, cos_theta, chess_pos[2]],
                     [0, 0, 0, 1]])
 
-    chess_to_world = np.linalg.inv(world_to_chess)
-
     chess_coord = array([(7 - row) * chessboard.field_size + chessboard.field_size/2,
                          0,
                          (7 - column) * chessboard.field_size + chessboard.field_size/2,
@@ -167,4 +165,5 @@ def move_to_garbage(chessboard, from_pos):
         :return: Returns a list of instructions for the GUI.
     '''
     drop_location = "j5"
+    print(32 - len(chessboard.pieces))
     return high_path(chessboard, from_pos, drop_location)
