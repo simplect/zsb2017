@@ -35,6 +35,17 @@ class Speech:
                 tts.say(digit)
                 time.sleep(2)
 
+    def readSudoku(self, sudoku):
+        tts.say("Okay. I will now read all the digits from the top left corner down to the bottom right corner.")
+        for row in range(9):
+            for col in range(9):
+                digit = sudoku[row][col]
+                if digit == 0:
+                    tts.say("empty")
+                else:
+                    tts.say(digit)
+                time.sleep(2)
+
     # set the new volume (type double) in range [0-1]
     def setVolume(self, volume):
         if (volume >= 0 and volume <=1.0):
