@@ -4,6 +4,7 @@ import time
 class Speech:
     tts = ALProxy("ALTextToSpeech", "169.254.35.27", 9559)
 
+    # sets the volume to a default value
     def __init__(self):
         tts.setVolume(0.8)
 
@@ -21,20 +22,18 @@ class Speech:
     # gets a sudoku and a tuple with coordinates of a field
     # outputs the digit on that field
     def getHint(self, sudoku, coordinates):
-        x,y = coordinates
-        digit = sudoku[x][y]
+        row,col = coordinates
+        digit = sudoku[row][col]
         tts.say("The digit on that cell is", digit)
 
     # outputs the whole sudoku
     def getFullAnswer(self, sudoku):
         tts.say("Okay. I will now say all the right digits from the top left corner down to the bottom right corner.")
-        for x in range(9):
-            for y in range(9):
-                digit = sudoku[x][y]
+        for row in range(9):
+            for col in range(9):
+                digit = sudoku[row][col]
                 tts.say(digit)
-                time.sleep(5)
-
-        tts.say("Lets go party.")
+                time.sleep(2)
 
     # set the new volume (type double) in range [0-1]
     def setVolume(self, volume):
