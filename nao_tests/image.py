@@ -5,6 +5,7 @@
 #
 
 import sys
+import time
 
 from PyQt4.QtGui import *
 from naoqi import ALProxy
@@ -84,8 +85,8 @@ class ImageWidget(QWidget):
                              self._alImage[0],           # Width.
                              self._alImage[1],           # Height.
                              QImage.Format_RGB888)
-
-        self._image.save('shot.jpg', 'jpg')
+        self._image.save('shot_{}.jpg'.format(time.time()), 'jpg')
+        sys.exit(0)
 
     def timerEvent(self, event):
         """
