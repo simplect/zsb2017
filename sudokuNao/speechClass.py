@@ -51,8 +51,14 @@ class Speech:
             self.tts.say("My volume could not be changed correctly.");
 
     def checkThisDigit(self, digit):
+        self.tts.say("Here's a tip: maybe you can fill out number"+ str(digit));
 
+class Dialoge:
+    def __init__(self):
+        self.tts.say("Let's go play.")
 
+    def chooseRightAnswer(self):
+        self.tts.say("Let's go play.")
 
 class SudokuNao:
     def __init__(self, sudoku):
@@ -67,7 +73,6 @@ def main():
     sudoku = [[3,0,0,0,8,0,0,0,6],[0,1,0,0,0,6,0,2,0],[0,0,4,7,0,0,5,0,0],[0,4,0,0,1,0,9,0,0],[6,0,0,2,0,4,0,0,1],[0,0,3,0,6,0,0,5,0],[0,0,8,0,0,3,6,0,0],[0,2,0,4,0,0,0,1,0],[5,0,0,0,2,0,0,0,7]]
     #sp.introSpeech()
     #sp.instructionMenu()
-    sp.getFullAnswer(sudoku)
 
 if __name__=='__main__':
     main()
