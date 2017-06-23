@@ -67,3 +67,13 @@ class SudokuNao:
     def checkDigit(self, sudoku):
         digit = 0
         return digit
+
+    def makeSudokuArray(self, sudokuStr):
+        sudokuArray = []
+        for n in range(9):
+            substr = sudokuStr[(n*8):(n+1*8)]
+            rowArray = []
+            for x in substr:
+                rowArray.append(x)
+            sudokuArray.append(rowArray)
+        return sudokuArray
