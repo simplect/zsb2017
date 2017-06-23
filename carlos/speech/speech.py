@@ -26,23 +26,28 @@ class Speech:
         self.tts.say("Now I can help you with hints or give you the full answer.")
         self.tts.say("Let's go play.")
 
+    def getGameRules(self):
+        self.tts.say("To complete your sudoku correctly, you must fill in al the empty squares.")
+        self.tts.say("When you are finished, the numbers 1 to 9 must appear exactly once in each row, column and box.")
+        self.tts.say("During the game, you must keep this in mind and use this knowledge to your advantage, while filling in squares.")
+
     def getRandomHint(self):
         randNum = randint(0,4)
         if (randNum == 0):
-            self.tts.say("Have you already looked at the most filled in row, column or square?")
+            self.tts.say("Have you already looked at the most filled in row, column or box?")
 
         elif (randNum == 1):
-            self.tts.say("Maybe you have to think one step ahead. Look which numbers' locations in a row, column or square are blocked by the numbers in the already filled in fields.")
+            self.tts.say("Maybe you have to think one step ahead. Look which numbers' locations in a row, column or box are blocked by the numbers in the already filled in squares.")
 
         elif (randNum == 2):
-            self.tts.say("Which specific numbers are missing in the row, column or square you are looking at?")
+            self.tts.say("Which specific numbers are missing in the row, column or box you are looking at?")
 
         elif (randNum == 3):
-            self.tts.say("Look at three squares and see if there are two identical numbers in two of the squares. Maybe you can fill in this number in the third square?")
+            self.tts.say("Look at three boxes and see if there are two identical numbers in two of the boxes. Maybe you can fill in this number in the third box?")
 
 
-    # gets a sudoku and a tuple with coordinates of a field
-    # outputs the digit on that field
+    # gets a sudoku and a tuple with coordinates of a square
+    # outputs the digit on that square
     def getHint(self, sudoku, coordinates):
         row,col = coordinates
         digit = sudoku[row][col]
