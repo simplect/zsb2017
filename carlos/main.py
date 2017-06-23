@@ -1,7 +1,7 @@
 #from sudoku.main import solve
 import time
 import sys
-from naoqi import ALBroker
+from naoqi import ALBroker, ALProxy
 from speech.speech import Speech, SudokuNao
 from behaviour.idle import IdleBehaviour, HumanGreeterModule, HumanTrackedEventWatcher
 
@@ -12,6 +12,7 @@ IP = '169.254.35.27'
 PORT = 9559
 sp = Speech(IP, PORT)
 ib = IdleBehaviour(IP, PORT)
+
 #ib.sitRelax()
 
 #solution = solve("sudoku.jpg")
