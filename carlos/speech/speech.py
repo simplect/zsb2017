@@ -61,9 +61,41 @@ class Dialoge:
         self.tts.say("Let's go play.")
 
 class SudokuNao:
-    def __init__(self, sudoku):
-        self.sudoku = sudoku
+    def __init__(self, strings):
+        self.startSudoku = self.makeSudokuArray(strings[0])
+        self.endSudoku = self.makeSudokuArray(strings[1])
+
+    def printArrays(self):
+        print("The start sudoku is: ")
+        for x in self.startSudoku:
+            print(x)
+        print("The solved sudoku is: ")
+        for x in self.endSudoku:
+            print(x)
 
     def checkDigit(self, sudoku):
-        digit = 0
-        return digit
+        best_count = 0
+        for i in range(1,10):
+            count = counter(i, sudoku)
+            if count > best_count and count < 9:
+                best_count = count
+        return best_count
+
+    def counter(self, number, sudoku):
+        count = 0
+        for i in range(9):
+            for j in range(9):
+                value = sudoku[i][j]
+                if value == number:
+                    count += 1
+        return count
+
+    def makeSudokuArray(self, sudokuStr):
+        sudokuArray = []
+        for n in range(9):
+            substr = sudokuStr[(n*9):((n+1)*9)]
+            rowArray = []
+            for x in substr:
+                rowArray.append(int(x))
+            sudokuArray.append(rowArray)
+        return sudokuArray
