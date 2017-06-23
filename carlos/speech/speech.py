@@ -62,8 +62,8 @@ class Dialoge:
 
 class SudokuNao:
     def __init__(self, strings):
-        self.startSudoku = makeSudokuArray(strings[0])
-        self.endSudoku = makeSudokuArray(strings[1])
+        self.startSudoku = self.makeSudokuArray(strings[0])
+        self.endSudoku = self.makeSudokuArray(strings[1])
 
     def printArrays(self):
         print("The start sudoku is: ")
