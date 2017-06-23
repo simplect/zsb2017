@@ -18,7 +18,7 @@ Code modified from the following sources:
 - http://goo.gl/U4hMDV, using http://norvig.com/sudoku.py
 """
 
-import norvig_sudoku
+import sudoku.norvig_sudoku as norvig_sudoku
 
 class SudokuSolver(object):
     """Solves a Sudoku puzzle.

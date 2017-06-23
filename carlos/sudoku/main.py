@@ -11,9 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import cv2
-import sudoku_image_parser
-import sudoku_solver
+from sudoku.image_parser import SudokuImageParser, ImageError
+from sudoku.solver import SudokuSolver, ContradictionError
 
 from skimage import exposure
 from skimage.viewer import ImageViewer
@@ -56,8 +57,8 @@ def crop(image):
                     return image[y-10:y+h+10,x-10:x+w+10]
 
 def solve(image_name):
-    parser = sudoku_image_parser.SudokuImageParser()
-    solver = sudoku_solver.SudokuSolver()
+    parser = SudokuImageParser()
+    solver = SudokuSolver()
     stringified_puzzle = ''
     try:
         image_data = cv2.imread(image_name, cv2.IMREAD_COLOR)
@@ -65,12 +66,12 @@ def solve(image_name):
         #viewer = ImageViewer(img)
         #viewer.show()
         stringified_puzzle = parser.parse(img)
-    except (IndexError, sudoku_image_parser.ImageError) as e:
+    except (IndexError, ImageError) as e:
         print(e)
-        return
+        return False
     try:
         solution = solver.solve(stringified_puzzle)
-        return
-    except (sudoku_solver.ContradictionError, ValueError) as e:
+    except (ContradictionError, ValueError) as e:
         print(e)
-        return
+        return False
+    return (stringified_puzzle, solution)

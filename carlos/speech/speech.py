@@ -2,10 +2,10 @@ from naoqi import ALProxy
 import time
 
 class Speech:
-    tts = ALProxy("ALTextToSpeech", "169.254.28.133", 9559)
 
     # sets the volume to a default value
-    def __init__(self):
+    def __init__(self, IP, PORT):
+        self.tts = ALProxy("ALTextToSpeech", IP, PORT)
         self.tts.setVolume(0.8)
 
     # outputs the intro monologue
@@ -67,12 +67,3 @@ class SudokuNao:
     def checkDigit(self, sudoku):
         digit = 0
         return digit
-
-def main():
-    sp = Speech()
-    sudoku = [[3,0,0,0,8,0,0,0,6],[0,1,0,0,0,6,0,2,0],[0,0,4,7,0,0,5,0,0],[0,4,0,0,1,0,9,0,0],[6,0,0,2,0,4,0,0,1],[0,0,3,0,6,0,0,5,0],[0,0,8,0,0,3,6,0,0],[0,2,0,4,0,0,0,1,0],[5,0,0,0,2,0,0,0,7]]
-    #sp.introSpeech()
-    #sp.instructionMenu()
-
-if __name__=='__main__':
-    main()

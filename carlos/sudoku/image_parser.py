@@ -117,8 +117,8 @@ class SudokuImageParser(object):
             Trained cv2.KNearest model.
         """
 
-        samples = np.float32(np.loadtxt('training_data/feature_vector_pixels2.data'))
-        responses = np.float32(np.loadtxt('training_data/samples_pixels2.data'))
+        samples = np.float32(np.loadtxt('sudoku/training_data/feature_vector_pixels2.data'))
+        responses = np.float32(np.loadtxt('sudoku/training_data/samples_pixels2.data'))
         # Modify for opncv3
         #model = cv2.KNearest()
         model = cv2.ml.KNearest_create()
