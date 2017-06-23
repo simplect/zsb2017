@@ -61,8 +61,8 @@ class Dialoge:
         self.tts.say("Let's go play.")
 
 class SudokuNao:
-    def __init__(self, sudoku):
-        self.sudoku = sudoku
+    def __init__(self):
+        self.sudoku = []
 
     def checkDigit(self, sudoku):
         digit = 0
