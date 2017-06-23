@@ -65,6 +65,14 @@ class SudokuNao:
         self.startSudoku = makeSudokuArray(strings[0])
         self.endSudoku = makeSudokuArray(strings[1])
 
+    def printArrays(self):
+        print("The start sudoku is: ")
+        for x in self.startSudoku:
+            print(x)
+        print("The solved sudoku is: ")
+        for x in self.endSudoku:
+            print(x)
+
     def checkDigit(self, sudoku):
         digit = 0
         return digit
