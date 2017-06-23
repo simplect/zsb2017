@@ -96,6 +96,6 @@ class SudokuNao:
             substr = sudokuStr[(n*9):((n+1)*9)]
             rowArray = []
             for x in substr:
-                rowArray.append(x)
+                rowArray.append(int(x))
             sudokuArray.append(rowArray)
         return sudokuArray
