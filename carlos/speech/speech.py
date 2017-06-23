@@ -81,6 +81,7 @@ class SudokuNao:
         sudokuArray = []
         for n in range(9):
             substr = sudokuStr[(n*9):(n+1*9)]
+            print(substr)
             rowArray = []
             for x in substr:
                 rowArray.append(x)
