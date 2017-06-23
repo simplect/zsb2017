@@ -1,4 +1,7 @@
+import os
+import time
 from naoqi import ALProxy, ALModule
+
 
 class IdleBehaviour:
 
@@ -71,10 +74,13 @@ class HumanGreeterModule(ALModule):
         self.tts.say("I like that you like it")
         print("like event")
 
-        # Subscribe again to the event
-        memory.subscribeToEvent("FaceCharacteristics/PersonSmiling",
-            "HumanGreeter",
-            "onFaceDetected")
+        newpid = os.fork()
+        if newpid == 0:
+            time.sleep(30)
+            # Subscribe again to the event
+            memory.subscribeToEvent("FaceCharacteristics/PersonSmiling",
+                "HumanGreeter",
+                "onFaceDetected")
 
 class HumanTrackedEventWatcher(ALModule):
     """ A module to react to HumanTracked and PeopleLeft events """

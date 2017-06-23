@@ -13,11 +13,11 @@ PORT = 9559
 sp = Speech(IP, PORT)
 ib = IdleBehaviour(IP, PORT)
 
-#ib.sitRelax()
+ib.crouch()
 
 #solution = solve("sudoku.jpg")
 solution = ('401290075200300800070080006000103062105000403730608000600020030007001004890065107', '481296375256317849379584216948153762165972483732648951614729538527831694893465127')
-#suNao = SudokuNao(solution)
+suNao = SudokuNao(solution)
 #suNao.printArrays()
 
 
