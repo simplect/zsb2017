@@ -1,5 +1,6 @@
 from naoqi import ALProxy
 import time
+from random import randint
 
 class Speech:
 
@@ -24,6 +25,20 @@ class Speech:
         self.tts.say("Great! I have seen your sudoku.")
         self.tts.say("Now I can help you with hints or give you the full answer.")
         self.tts.say("Let's go play.")
+
+    def getRandomHint(self):
+        randNum = randint(0,4)
+        if (randNum == 0):
+            self.tts.say("Have you already looked at the most filled in row, column or square?")
+
+        elif (randNum == 1):
+            self.tts.say("Maybe you have to think one step ahead. Look which numbers' locations in a row, column or square are blocked by the numbers in the already filled in fields.")
+
+        elif (randNum == 2):
+            self.tts.say("Which specific numbers are missing in the row, column or square you are looking at?")
+
+        elif (randNum == 3):
+            self.tts.say("Look at three squares and see if there are two identical numbers in two of the squares. Maybe you can fill in this number in the third square?")
 
 
     # gets a sudoku and a tuple with coordinates of a field
