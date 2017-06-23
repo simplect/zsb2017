@@ -74,8 +74,21 @@ class SudokuNao:
             print(x)
 
     def checkDigit(self, sudoku):
-        digit = 0
-        return digit
+        best_count = 0
+        for i in range(1:10):
+            count = counter(i, sudoku)
+            if count > best_count and count < 9:
+                best_count = count
+        return best_count
+
+    def counter(self, number, sudoku):
+        count = 0
+        for i in range(9):
+            for j in range(9):
+                value = sudoku[i][j]
+                if value == number:
+                    count += 1
+        return count
 
     def makeSudokuArray(self, sudokuStr):
         sudokuArray = []
