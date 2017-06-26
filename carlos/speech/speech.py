@@ -25,7 +25,6 @@ class Speech:
     def seenSudoku(self):
         self.tts.say("Great! I have seen your sudoku.")
         self.tts.say("Now I can help you with hints or give you the full answer.")
-        self.tts.say("Let's go play.")
 
     # outputs the general rules of the sudoku game
     def getGameRules(self):
