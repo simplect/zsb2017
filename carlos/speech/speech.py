@@ -21,16 +21,19 @@ class Speech:
         self.tts.say("Furthermore, you can ask me for a digit in a cell and I will give it to you.")
         self.tts.say("Lastly, I can give you the full answer of the sudoku")
 
+    # nao confirms it has seen the sudoku
     def seenSudoku(self):
         self.tts.say("Great! I have seen your sudoku.")
         self.tts.say("Now I can help you with hints or give you the full answer.")
         self.tts.say("Let's go play.")
 
+    # outputs the general rules of the sudoku game
     def getGameRules(self):
         self.tts.say("To complete your sudoku correctly, you must fill in al the empty squares.")
         self.tts.say("When you are finished, the numbers 1 to 9 must appear exactly once in each row, column and box.")
         self.tts.say("During the game, you must keep this in mind and use this knowledge to your advantage, while filling in squares.")
 
+    # gives one of the four random hints
     def getRandomHint(self):
         randNum = randint(0,4)
         if (randNum == 0):
@@ -53,6 +56,7 @@ class Speech:
         digit = sudoku[row][col]
         self.tts.say("The digit on that cell is "+str(digit))
 
+    # reads aloud the given sudoku
     def readSudoku(self, sudoku):
         self.tts.say("Okay. I will now read all the digits from the top left corner down to the bottom right corner.")
         for row in range(9):
@@ -70,15 +74,52 @@ class Speech:
         else:
             self.tts.say("My volume could not be changed correctly.");
 
+    # tells the player to look at a given number
     def checkThisDigit(self, digit):
         self.tts.say("Here's a tip: maybe you can fill out number"+ str(digit));
 
-class Dialoge:
-    def __init__(self):
-        self.tts.say("Let's go play.")
+    # asks if the player is sure of his question
+    def checkIfSure(self):
+        self.tts.say("Are you sure you want me to tell you?");
 
-    def chooseRightAnswer(self):
-        self.tts.say("Let's go play.")
+    # tells player the nao didn't understand the message
+    def didNotUnderstand(self):
+        self.tts.say("Sorry, I didn't understand");
+
+    # says okay
+    def okay(self):
+        self.tts.say("Okay.");
+
+
+class Dialoge:
+    def __init__(self, IP, PORT):
+        self.speech = Speech(IP, PORT)
+
+    # chooses the right response according to the audio input
+    def chooseRightAnswer(self, sudoku, sentence, row, col, volume):
+        if (sentence = "give random hint"):
+            self.speech.getRandomHint()
+        elif (sentence = "give instructions" or "what can you help me with"):
+            self.speech.instructionMenu()
+        elif (sentence = "rules"):
+            self.speech.getGameRules()
+        elif (sentence = "give hint"):
+            digit = SudokuNao.checkDigit(sudoku)
+            self.speech.checkThisDigit(digit)
+        elif (sentence = "full answer"):
+            self.speech.checkIfSure()
+            # sureCheck = speechRecognition.checkIfSure()
+            # if sureCheck == True:
+            self.speech.readSudoku(sudoku)
+            # else:
+            # self.speech.okay()
+        elif (row != None and col != None):
+            self.speech.getHint(sudoku, (row, col))
+        elif volume != None:
+            self.speech.setVolume(volume)
+        else:
+            self.speech.didNotUnderstand()
+
 
 class SudokuNao:
     def __init__(self, strings):
