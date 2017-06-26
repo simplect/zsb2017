@@ -71,7 +71,7 @@ class HumanGreeterModule(ALModule):
         memory.unsubscribeToEvent("FaceCharacteristics/PersonSmiling",
             "HumanGreeter")
 
-        self.tts.say("I like that you like it")
+        self.tts.say("Your smile makes my heart grow bigger.")
         print("like event")
 
         newpid = os.fork()
