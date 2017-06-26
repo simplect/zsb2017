@@ -5,6 +5,7 @@ from naoqi import ALBroker, ALProxy
 from speech.speech import Speech, SudokuNao
 from behaviour.idle import IdleBehaviour, HumanGreeterModule, HumanTrackedEventWatcher
 from vision.image import Vision
+from random import randint
 
 #solution = solve("sudoku.jpg")
 solution = ('401290075200300800070080006000103062105000403730608000600020030007001004890065107', '481296375256317849379584216948153762165972483732648951614729538527831694893465127')
@@ -15,6 +16,7 @@ sp = Speech(IP, PORT)
 ib = IdleBehaviour(IP, PORT)
 img = Vision(IP, PORT)
 ib.crouch()
+sn = SudokuNao(solution)
 
 solution = False
 
@@ -76,3 +78,30 @@ except KeyboardInterrupt:
     myBroker.shutdown()
     ib.sleep()
     sys.exit(0)
+
+'''
+begin = True
+end = False
+sp.introSpeech()
+if saysYes():
+    sp.askForSudoku()
+    waitForSudoku()
+    while(true):
+        end = checkIfEnd(sn.sudoku)
+        sp.askForSquare(begin, end)
+        if saysYes():
+            sp.askForCheck()
+            waitForSudoku()
+            if rightAnswer:
+                sp.rightAnswer()
+                sn.sudoku = updateSudoku(answer)
+            else:
+                sp.wrongAnswerGetHint(sn.sudoku)
+        else:
+            sp.giveHint(sn.sudoku)
+    if end:
+        randomDancing()
+        break
+else:
+    print("game not entered")
+'''

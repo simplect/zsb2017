@@ -9,10 +9,59 @@ class Speech:
         self.tts = ALProxy("ALTextToSpeech", IP, PORT)
         self.tts.setVolume(0.8)
 
-    # outputs the intro monologue
+    # outputs the intro monologuew
     def introSpeech(self):
-        self.tts.say("Hello!")
+        self.tts.say("Hey! Do you want to make a sudoku with me?")
+
+    def askForSudoku(self):
         self.tts.say("Let me see your sudoku puzzle before we start.")
+
+    def askForCheck(self):
+        self.tts.say(" Write it down and show it to me, please! I can check it for you!")
+
+    def wrongAnswerGetHint(self, sudoku):
+        self.tts.say("Oops! I think you made a mistake. Do you want a hint?")
+        while(True):
+            sp.giveHint()
+            randNum = randint()
+            if randNum == 1:
+                sp.getRandomHint()
+            elif randNum == 2:
+                digit = SudokuNao.checkDigit(sudoku)
+                sp.checkThisDigit(digit)
+            askForSquare()
+            if saysYes():
+                # if correctAnswer():
+                    # self.rightAnswer()
+                    #break
+                # else:
+                    #continue
+            else:
+                continue
+
+    def rightAnswer(self):
+        self.tts.say("Well done!")
+
+    def askForSquare(self, begin, end):
+        if begin == True:
+            self.seenSudoku()
+            begin == False
+        elif end == True
+            self.lastSquare()
+        else:
+            self.tts.say("Can you fill in another square?")
+
+    def giveHint(self, sudoku):
+        self.tts.say("Let me give you a hint.")
+        randNum = randint()
+        if randNum == 1:
+            sp.getRandomHint()
+        elif randNum == 2:
+            digit = SudokuNao.checkDigit(sudoku)
+            sp.checkThisDigit(digit)
+
+    def lastSquare(self):
+        self.tts.say("Only one box to go!")
 
     # outputs all the functions the nao can provide to the player
     def instructionMenu(self):
@@ -23,8 +72,7 @@ class Speech:
 
     # nao confirms it has seen the sudoku
     def seenSudoku(self):
-        self.tts.say("Great! I have seen your sudoku.")
-        self.tts.say("Now I can help you with hints or give you the full answer.")
+        self.tts.say("Nice one! Can you fill in a square already?")
 
     # outputs the general rules of the sudoku game
     def getGameRules(self):
@@ -121,15 +169,15 @@ class Dialoge:
 
 class SudokuNao:
     def __init__(self, strings):
-        self.startSudoku = self.makeSudokuArray(strings[0])
-        self.endSudoku = self.makeSudokuArray(strings[1])
+        self.sudoku = self.makeSudokuArray(strings[0])
+        self.sudokuAnswer = self.makeSudokuArray(strings[1])
 
     def printArrays(self):
         print("The start sudoku is: ")
-        for x in self.startSudoku:
+        for x in self.sudoku:
             print(x)
         print("The solved sudoku is: ")
-        for x in self.endSudoku:
+        for x in self.sudokuAnswer:
             print(x)
 
     def checkDigit(self, sudoku):
