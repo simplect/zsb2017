@@ -99,7 +99,7 @@ class Dialoge:
     def chooseRightAnswer(self, sudoku, sentence, row, col, volume):
         if sentence == "give random hint":
             self.speech.getRandomHint()
-        elif sentence == "give instructions" or "what can you help me with":
+        elif sentence == "give instructions" or sentence == "what can you help me with":
             self.speech.instructionMenu()
         elif sentence == "rules":
             self.speech.getGameRules()
