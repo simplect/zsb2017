@@ -16,6 +16,18 @@ class IdleBehaviour:
         self.basic_awareness.startAwareness()
         self.basic_awareness.setEngagementMode("FullyEngaged")
 
+    def test(self):
+         # Send robot to Pose Init
+         self.posture.goToPosture("StandInit", 0.5)
+         self.motion.wbEnable(True)
+         # Example showing how to com go to LLeg.
+         supportLeg = "LLeg"
+         duration   = 2.0
+         self.motion.wbGoToBalance(supportLeg, duration)
+         supportLeg = "RLeg"
+         duration   = 2.0
+         self.motion.wbGoToBalance(supportLeg, duration)
+         self.motion.wbEnable(False)
 
     def doFunny(self):
         pass
