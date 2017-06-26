@@ -108,8 +108,7 @@ class Dialoge:
             self.speech.checkThisDigit(digit)
         elif sentence = "full answer":
             self.speech.checkIfSure()
-            # sureCheck = speechRecognition.checkIfSure()
-            # if sureCheck == True:
+            # if speechRecognition.checkIfSure() == True:
             self.speech.readSudoku(sudoku)
             # else:
             # self.speech.okay()
