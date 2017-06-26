@@ -97,23 +97,23 @@ class Dialoge:
 
     # chooses the right response according to the audio input
     def chooseRightAnswer(self, sudoku, sentence, row, col, volume):
-        if (sentence = "give random hint"):
+        if sentence = "give random hint":
             self.speech.getRandomHint()
-        elif (sentence = "give instructions" or "what can you help me with"):
+        elif sentence = "give instructions" or "what can you help me with:
             self.speech.instructionMenu()
-        elif (sentence = "rules"):
+        elif sentence = "rules":
             self.speech.getGameRules()
-        elif (sentence = "give hint"):
+        elif sentence = "give hint":
             digit = SudokuNao.checkDigit(sudoku)
             self.speech.checkThisDigit(digit)
-        elif (sentence = "full answer"):
+        elif sentence = "full answer":
             self.speech.checkIfSure()
             # sureCheck = speechRecognition.checkIfSure()
             # if sureCheck == True:
             self.speech.readSudoku(sudoku)
             # else:
             # self.speech.okay()
-        elif (row != None and col != None):
+        elif row != None and col != None:
             self.speech.getHint(sudoku, (row, col))
         elif volume != None:
             self.speech.setVolume(volume)
