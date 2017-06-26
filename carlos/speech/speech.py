@@ -36,16 +36,16 @@ class Speech:
     # gives one of the four random hints
     def getRandomHint(self):
         randNum = randint(0,4)
-        if (randNum == 0):
+        if randNum == 0:
             self.tts.say("Have you already looked at the most filled in row, column or box?")
 
-        elif (randNum == 1):
+        elif randNum == 1:
             self.tts.say("Maybe you have to think one step ahead. Look which numbers' locations in a row, column or box are blocked by the numbers in the already filled in squares.")
 
-        elif (randNum == 2):
+        elif randNum == 2:
             self.tts.say("Which specific numbers are missing in the row, column or box you are looking at?")
 
-        elif (randNum == 3):
+        elif randNum == 3:
             self.tts.say("Look at three boxes and see if there are two identical numbers in two of the boxes. Maybe you can fill in this number in the third box?")
 
 
@@ -69,7 +69,7 @@ class Speech:
 
     # set the new volume (type double) in range [0-1]
     def setVolume(self, volume):
-        if (volume >= 0 and volume <=1.0):
+        if volume >= 0 and volume <=1.0:
             self.tts.setVolume(volume);
         else:
             self.tts.say("My volume could not be changed correctly.");
@@ -97,23 +97,22 @@ class Dialoge:
 
     # chooses the right response according to the audio input
     def chooseRightAnswer(self, sudoku, sentence, row, col, volume):
-        if (sentence == "give random hint"):
+        if sentence == "give random hint":
             self.speech.getRandomHint()
-        elif (sentence == "give instructions" or "what can you help me with"):
+        elif sentence == "give instructions" or "what can you help me with":
             self.speech.instructionMenu()
-        elif (sentence == "rules"):
+        elif sentence == "rules":
             self.speech.getGameRules()
-        elif (sentence == "give hint"):
+        elif sentence == "give hint":
             digit = SudokuNao.checkDigit(sudoku)
             self.speech.checkThisDigit(digit)
-        elif (sentence == "full answer"):
+        elif sentence == "full answer":
             self.speech.checkIfSure()
-            # sureCheck = speechRecognition.checkIfSure()
-            # if sureCheck == True:
+            # if speechRecognition.checkIfSure() == True:
             self.speech.readSudoku(sudoku)
             # else:
             # self.speech.okay()
-        elif (row != None and col != None):
+        elif row != None and col != None:
             self.speech.getHint(sudoku, (row, col))
         elif volume != None:
             self.speech.setVolume(volume)
