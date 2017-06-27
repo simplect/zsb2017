@@ -86,16 +86,16 @@ class Speech:
     def getRandomHint(self):
         randNum = randint(0,4)
         if randNum == 0:
-            self.tts.say("^start(animations/Stand/Gestures/YouKnowWhat_1) Have you already looked at the most filled in row, column or box?")
+            self.animated_speech.say("^start(animations/Stand/Gestures/YouKnowWhat_1) Have you already looked at the most filled in row, column or box?")
 
         elif randNum == 1:
-            self.tts.say("^start(animations/Stand/Gestures/YouKnowWhat_5) Maybe you have to think one step ahead. Look which numbers' locations in a row, column or box are blocked by the numbers in the already filled in squares.")
+            self.animated_speech.say("^start(animations/Stand/Gestures/YouKnowWhat_5) Maybe you have to think one step ahead. Look which numbers' locations in a row, column or box are blocked by the numbers in the already filled in squares.")
 
         elif randNum == 2:
-            self.tts.say("^start(animations/Stand/Gestures/YouKnowWhat_1) Which specific numbers are missing in the row, column or box you are looking at?")
+            self.animated_speech.say("^start(animations/Stand/Gestures/YouKnowWhat_1) Which specific numbers are missing in the row, column or box you are looking at?")
 
         elif randNum == 3:
-            self.tts.say("^start(animations/Stand/Gestures/YouKnowWhat_5) Look at three boxes and see if there are two identical numbers in two of the boxes. Maybe you can fill in this number in the third box?")
+            self.animated_speech.say("^start(animations/Stand/Gestures/YouKnowWhat_5) Look at three boxes and see if there are two identical numbers in two of the boxes. Maybe you can fill in this number in the third box?")
 
 
     # gets a sudoku and a tuple with coordinates of a square
@@ -107,7 +107,7 @@ class Speech:
 
     # reads aloud the given sudoku
     def readSudoku(self, sudoku):
-        self.tts.say("^start(animations/Stand/Gestures/Me_1) Okay. I will now read all the digits from the top left corner down to the bottom right corner.")
+        self.animated_speech.say("^start(animations/Stand/Gestures/Me_1) Okay. I will now read all the digits from the top left corner down to the bottom right corner.")
         for row in range(9):
             for col in range(9):
                 digit = sudoku[row][col]
