@@ -14,6 +14,7 @@ PORT = 9559
 
 speech = Speech(IP, PORT)
 idle = IdleBehaviour(IP, PORT)
+move = Move(IP, PORT)
 #vision = Vision(IP, PORT)
 
 # We need this broker to be able to construct
@@ -44,6 +45,10 @@ try:
         time.sleep(1)
 
         idle.crouch()
+        speech.introSpeech()
+        askForSudoku()
+        speech.askForCheck()
+        speech.rightAnswer()
 
         """
         speech.introSpeech()
@@ -71,7 +76,7 @@ except KeyboardInterrupt:
     print
     print "Interrupted by user, shutting down"
     myBroker.shutdown()
-    ib.sleep()
+    idle.sleep()
     sys.exit(0)
 
 '''

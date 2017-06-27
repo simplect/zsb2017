@@ -7,20 +7,21 @@ class Speech:
     # sets the volume to a default value
     def __init__(self, IP, PORT):
         self.tts = ALProxy("ALTextToSpeech", IP, PORT)
+        self.animated_speech = ALProxy("ALAnimatedSpeech", IP, PORT)
         self.tts.setVolume(0.8)
 
     # outputs the intro monologuew
     def introSpeech(self):
-        self.tts.say("Hey! Do you want to make a sudoku with me?")
+        self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hey! Do you want to make a sudoku with me?")
 
     def askForSudoku(self):
         self.tts.say("Let me see your sudoku puzzle before we start.")
 
     def askForCheck(self):
-        self.tts.say(" Write it down and show it to me, please! I can check it for you!")
+        self.tts.say("^start(animations/Stand/Gestures/Explain_1) Write it down and show it to me, please! I can check it for you!")
 
     def wrongAnswerGetHint(self, sudoku):
-        self.tts.say("Oops! I think you made a mistake. Do you want a hint?")
+        self.tts.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) Oops! I think you made a mistake. Do you want a hint?")
         while(True):
             sp.giveHint()
             randNum = randint()
@@ -41,7 +42,7 @@ class Speech:
                 continue
 
     def rightAnswer(self):
-        self.tts.say("Well done!")
+        self.animated_speech.say("^start(animations/Sit/BodyTalk/BodyTalk_1) Well done!")
 
     def askForSquare(self, begin, end):
         if begin == True:
@@ -53,7 +54,7 @@ class Speech:
             self.tts.say("Can you fill in another square?")
 
     def giveHint(self, sudoku):
-        self.tts.say("Let me give you a hint.")
+        self.animated_speech.say("^start(animations/Stand/Gestures/ShowSky_1) Let me give you a hint.")
         randNum = randint()
         if randNum == 1:
             sp.getRandomHint()
