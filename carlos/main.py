@@ -1,4 +1,4 @@
-#from sudoku.main import solve
+from sudoku.main import solve
 import time
 import sys
 import threading
@@ -6,7 +6,7 @@ from naoqi import ALBroker, ALProxy
 from speech.speech import Speech, SudokuNao
 from behaviour.idle import IdleBehaviour, HumanGreeterModule, HumanTrackedEventWatcher
 from behaviour.move import Move
-#from vision.image import Vision
+from vision.image import Vision
 from random import randint
 
 # SET-UP
@@ -16,7 +16,7 @@ PORT = 9559
 speech = Speech(IP, PORT)
 idle = IdleBehaviour(IP, PORT)
 move = Move(IP, PORT)
-#vision = Vision(IP, PORT)
+vision = Vision(IP, PORT)
 
 
 # We need this broker to be able to construct
@@ -65,7 +65,7 @@ try:
         begin = True
         end = False
         sp.introSpeech()
-        saysYes = lambda : return True
+        saysYes = lambda : True
         if saysYes():
             speech.askForSudoku()
             scans = sudoku_searcher(require_answer=True)
@@ -97,5 +97,3 @@ except KeyboardInterrupt:
     myBroker.shutdown()
     idle.sleep()
     sys.exit(0)
-
-'''
