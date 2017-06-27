@@ -173,8 +173,8 @@ class SudokuNao:
         self.sudoku = self.makeSudokuArray(strings[0])
         self.sudokuAnswer = self.makeSudokuArray(strings[1])
 
-    def updateSudoku(self, string):
-        self.sudoku = self.makeSudokuArray(string)
+    def updateSudoku(self, strings):
+        self.__init__(strings)
 
     def answerIsCorrect(self):
         for x in range(9):
@@ -219,11 +219,12 @@ class SudokuNao:
         return sudokuArray
 
     def countZeros(self, sudoku):
+        # Works with a string for now
         numZeros = 0
         for x in range(9):
             for y in range(9):
                 if sudoku[x][y] == 0:
-                    numZeros++
+                    numZeros += 1
         return numZeros
 
     def checkIfEnd(self, sudoku):

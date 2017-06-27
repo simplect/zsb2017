@@ -62,12 +62,12 @@ def solve(image_name):
         img = crop(image_data.copy())
 
         stringified_puzzle = parser.parse(img)
-    except (IndexError, ImageError) as e:
-        solution = False
+    except:
+        stringified_puzzle = False
 
     try:
         solution = solver.solve(stringified_puzzle)
-    except (ContradictionError, ValueError) as e:
+    except:
         solution = False
 
     return (stringified_puzzle, solution)
