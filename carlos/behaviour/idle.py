@@ -49,6 +49,15 @@ class IdleBehaviour:
         self.basic_awareness.stopAwareness()
         self.motion.rest()
 
+    def startIdling(self, idling):
+        while idling:
+            print("tudele")
+            # TODO: Write some funny things here
+            time.sleep(20)
+
+
+
+
 
 
 class HumanGreeterModule(ALModule):

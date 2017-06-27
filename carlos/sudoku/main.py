@@ -17,7 +17,6 @@ from sudoku.image_parser import SudokuImageParser, ImageError
 from sudoku.solver import SudokuSolver, ContradictionError
 
 from skimage import exposure
-from skimage.viewer import ImageViewer
 import numpy as np
 import argparse
 
@@ -28,9 +27,6 @@ def crop(image):
     # to the new height, clone it, and resize it
     ratio = image.shape[0] / 300.0
     orig = image.copy()
-
-    #image = imutils.resize(image, height = 300)
-
 
     # convert the image to grayscale, blur it, and find edges
     # in the image
@@ -60,18 +56,18 @@ def solve(image_name):
     parser = SudokuImageParser()
     solver = SudokuSolver()
     stringified_puzzle = ''
+
     try:
         image_data = cv2.imread(image_name, cv2.IMREAD_COLOR)
         img = crop(image_data.copy())
-        #viewer = ImageViewer(img)
-        #viewer.show()
+
         stringified_puzzle = parser.parse(img)
-    except (IndexError, ImageError) as e:
-        print(e)
-        return False
+    except:
+        stringified_puzzle = False
+
     try:
         solution = solver.solve(stringified_puzzle)
-    except (ContradictionError, ValueError) as e:
-        print(e)
-        return False
+    except:
+        solution = False
+
     return (stringified_puzzle, solution)
