@@ -50,8 +50,8 @@ def sudoku_searcher(require_answer = False):
     while not solution[0]:
         vision.getImage("sudoku.jpg")
         solution = solve("sudoku.jpg")
-        if solution[0] \
-            and sudoku.countZeros(sudoku.makeSudokuArray(solution[0])) > 70:
+        if not solution[0] \
+                or sudoku.countZeros(sudoku.makeSudokuArray(solution[0])) > 70:
             solution = (False, False)
             continue
         if not solution[1] and require_answer:
@@ -71,16 +71,18 @@ try:
             speech.askForSudoku()
             scans = sudoku_searcher(require_answer=True)
             sudoku = SudokuNao(scans)
-            while(True):
+            while True:
+                sudoku.printArrays()
                 end = sudoku.checkIfEnd(sudoku.sudoku)
                 speech.askForSquare(begin, end)
                 if saysYes():
                     speech.askForCheck()
                     scans = sudoku_searcher()
                     sudoku.updateSudoku(scans[0])
-                    if sn.answerIsCorrect():
+                    if sudoku.answerIsCorrect():
                         speech.rightAnswer()
                     else:
+                        sudoku.printArrays()
                         speech.wrongAnswerGetHint(sudoku.sudoku)
                 else:
                     speech.giveHint(sudoku.sudoku)

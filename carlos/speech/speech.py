@@ -21,15 +21,15 @@ class Speech:
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Write it down and show it to me, please! I can check it for you!")
 
     def wrongAnswerGetHint(self, sudoku):
-        self.tts.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) Oops! I think you made a mistake. Do you want a hint?")
+        self.animated_speech.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) Oops! I think you made a mistake. Do you want a hint?")
         while(True):
-            sp.giveHint()
+            self.giveHint()
             randNum = randint()
             if randNum == 1:
-                sp.getRandomHint()
+                self.getRandomHint()
             elif randNum == 2:
                 digit = SudokuNao.checkDigit(sudoku)
-                sp.checkThisDigit(digit)
+                self.checkThisDigit(digit)
             self.askForSquare(False, False)
             if saysYes():
                 pass
@@ -180,7 +180,9 @@ class SudokuNao:
     def answerIsCorrect(self):
         for x in range(9):
             for y in range(9):
-                if sudoku[x][y] != 0 and sudoku[x][y] != sudokuAnswer[x][y]:
+                if self.sudoku[x][y] == 0:
+                    continue
+                if self.sudoku[x][y] != self.sudokuAnswer[x][y]:
                     return False
         return True
 
