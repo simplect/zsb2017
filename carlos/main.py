@@ -1,4 +1,4 @@
-#from sudoku.main import solve
+from sudoku.main import solve
 import time
 import sys
 import threading
@@ -6,7 +6,7 @@ from naoqi import ALBroker, ALProxy
 from speech.speech import Speech, SudokuNao
 from behaviour.idle import IdleBehaviour, HumanGreeterModule, HumanTrackedEventWatcher
 from behaviour.move import Move
-#from vision.image import Vision
+from vision.image import Vision
 from random import randint
 
 # SET-UP
@@ -16,7 +16,7 @@ PORT = 9559
 speech = Speech(IP, PORT)
 idle = IdleBehaviour(IP, PORT)
 move = Move(IP, PORT)
-#vision = Vision(IP, PORT)
+vision = Vision(IP, PORT)
 
 
 # We need this broker to be able to construct
@@ -27,7 +27,7 @@ myBroker = ALBroker("myBroker",
    0,           # find a free port and use it
    IP,         # parent broker IP
    PORT)       # parent broker port
-
+"""
 # Global variable to store the HumanGreeter module instance
 HumanGreeter = None
 memory = None
@@ -39,10 +39,11 @@ global HumanGreeter
 global humanEventWatcher
 
 HumanGreeter = HumanGreeterModule("HumanGreeter")
-humanEventWatcher = HumanTrackedEventWatcher(IP,PORT)
+humranEventWatcher = HumanTrackedEventWatcher(IP,PORT)
+"""
 
 # Thread functions
-def sudoku_searcher(sudoku, require_answer):
+def sudoku_searcher(require_answer = False):
     print("Started sudoku searcher")
     solution = (False, False)
     while not solution[0]:
@@ -56,42 +57,39 @@ def sudoku_searcher(sudoku, require_answer):
             solution = (False, False)
             continue
 
-    sudoku.updateSudoku(solution)
+    return solution
 
 # MAIN CARLOS
 try:
     while True:
-        time.sleep(1)
+        begin = True
+        end = False
+        sp.introSpeech()
+        saysYes = lambda : True
+        if saysYes():
+            speech.askForSudoku()
+            scans = sudoku_searcher(require_answer=True)
+            sudoku = SudokuNao(scans)
+            while(True):
+                end = sudoku.checkIfEnd(sudoku.sudoku)
+                speech.askForSquare(begin, end)
+                if saysYes():
+                    speech.askForCheck()
+                    scans = sudoku_searcher()
+                    sudoku.updateSudoku(scans[0])
+                    if sn.answerIsCorrect():
+                        speech.rightAnswer()
+                    else:
+                        speech.wrongAnswerGetHint(sudoku.sudoku)
+                else:
+                    speech.giveHint(sudoku.sudoku)
+            if end:
+                #randomDancing()
+                break
+        else:
+            print("game not entered")
 
-        idle.crouch()
 
-        speech.introSpeech()
-        askForSudoku()
-        speech.askForCheck()
-        speech.rightAnswer()
-
-
-        """
-
-        speech.introSpeech()
-
-        sudoku = SudokuNao(([],[]))
-        idling = True
-        thread_sudoku = threading.Thread(target=sudoku_searcher, args=(sudoku,True,))
-        thread_idling =\
-            threading.Thread(target=IdleBehaviour.startIdling, args=(idle,idling,))
-
-#        thread_idling.start()
-        thread_sudoku.start()
-        thread_sudoku.join()
-
-        speech.seenSudoku()
-        idling = False
-
-#        thread_idling.join()
-        break
-
-        """
 
 except KeyboardInterrupt:
     print
@@ -99,31 +97,3 @@ except KeyboardInterrupt:
     myBroker.shutdown()
     idle.sleep()
     sys.exit(0)
-
-'''
-begin = True
-end = False
-sp.introSpeech()
-if saysYes():
-    speech.askForSudoku()
-    scans = waitForSudoku()
-    sudoku = SudokuNao(scans)
-    while(true):
-        end = checkIfEnd(sudoku.sudoku)
-        speech.askForSquare(begin, end)
-        if saysYes():
-            speech.askForCheck()
-            scans = waitForSudoku()
-            sudoku.updateSudoku(scans[0])
-            if sn.answerIsCorrect():
-                speech.rightAnswer()
-            else:
-                speech.wrongAnswerGetHint(sudoku.sudoku)
-        else:
-            speech.giveHint(sudoku.sudoku)
-    if end:
-        randomDancing()
-        break
-else:
-    print("game not entered")
-'''
