@@ -54,12 +54,10 @@ try:
             try:
                 solution = solve("sudoku.jpg")
                 print(solution)
-                """
                 print(solution[0][0])
                 if solution[0][0] != '3':
                     solution = False
                     continue
-                    """
             except:
                 continue
 
