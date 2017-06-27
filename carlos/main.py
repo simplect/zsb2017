@@ -27,7 +27,7 @@ myBroker = ALBroker("myBroker",
    0,           # find a free port and use it
    IP,         # parent broker IP
    PORT)       # parent broker port
-
+"""
 # Global variable to store the HumanGreeter module instance
 HumanGreeter = None
 memory = None
@@ -39,7 +39,8 @@ global HumanGreeter
 global humanEventWatcher
 
 HumanGreeter = HumanGreeterModule("HumanGreeter")
-humanEventWatcher = HumanTrackedEventWatcher(IP,PORT)
+humranEventWatcher = HumanTrackedEventWatcher(IP,PORT)
+"""
 
 # Thread functions
 def sudoku_searcher(sudoku, require_answer):
@@ -70,8 +71,7 @@ try:
         speech.askForCheck()
         speech.rightAnswer()
 
-
-        """
+"""
 
         speech.introSpeech()
 
@@ -86,12 +86,14 @@ try:
         thread_sudoku.join()
 
         speech.seenSudoku()
+        sudoku.printArrays()
         idling = False
 
 #        thread_idling.join()
         break
 
         """
+
 
 except KeyboardInterrupt:
     print
