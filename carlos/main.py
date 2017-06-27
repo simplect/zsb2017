@@ -43,7 +43,7 @@ humranEventWatcher = HumanTrackedEventWatcher(IP,PORT)
 """
 
 # Thread functions
-def sudoku_searcher(require_answer = False):
+def sudoku_searcher(require_answer = False, prev = False):
     print("Started sudoku searcher")
     solution = (False, False)
     sudoku = SudokuNao(([],[]))
@@ -57,6 +57,13 @@ def sudoku_searcher(require_answer = False):
         if not solution[1] and require_answer:
             solution = (False, False)
             continue
+        if prev:
+            new_sudoku = sudoku.makeSudokuArray(solution[0])
+            for x in range(9):
+                for y in range(9):
+                    if prev[x][y] != 0 and\
+                        prev[x][y] != new_sudoku[x][y]:
+                            solution = (False, False)
 
     return solution
 
@@ -71,13 +78,15 @@ try:
             speech.askForSudoku()
             scans = sudoku_searcher(require_answer=True)
             sudoku = SudokuNao(scans)
+
             while True:
                 sudoku.printArrays()
                 end = sudoku.checkIfEnd(sudoku.sudoku)
                 speech.askForSquare(begin, end)
                 if saysYes():
                     speech.askForCheck()
-                    scans = sudoku_searcher()
+                    scans = sudoku_searcher(prev = sudoku.sudoku)
+
                     sudoku.updateSudoku(scans[0])
                     if sudoku.answerIsCorrect():
                         speech.rightAnswer()

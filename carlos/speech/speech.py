@@ -23,7 +23,7 @@ class Speech:
     def wrongAnswerGetHint(self, sudoku):
         self.animated_speech.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) Oops! I think you made a mistake. Do you want a hint?")
         while(True):
-            self.giveHint()
+            self.giveHint(sudoku)
             randNum = randint()
             if randNum == 1:
                 self.getRandomHint()
