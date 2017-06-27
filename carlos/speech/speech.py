@@ -15,10 +15,10 @@ class Speech:
         self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hey! Do you want to make a sudoku with me?")
 
     def askForSudoku(self):
-        self.tts.say("Let me see your sudoku puzzle before we start.")
+        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Let me see your sudoku puzzle before we start. ^stop(animations/Stand/Gestures/Explain_1)")
 
     def askForCheck(self):
-        self.tts.say("^start(animations/Stand/Gestures/Explain_1) Write it down and show it to me, please! I can check it for you!")
+        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Write it down and show it to me, please! I can check it for you!")
 
     def wrongAnswerGetHint(self, sudoku):
         self.tts.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) Oops! I think you made a mistake. Do you want a hint?")
@@ -42,7 +42,7 @@ class Speech:
                 continue
 
     def rightAnswer(self):
-        self.animated_speech.say("^start(animations/Sit/BodyTalk/BodyTalk_1) Well done!")
+        self.animated_speech.say("^start(animations/Stand/Gestures/Yes_1) Well done!")
 
     def askForSquare(self, begin, end):
         if begin == True:
@@ -51,7 +51,7 @@ class Speech:
         elif end == True:
             self.lastSquare()
         else:
-            self.tts.say("Can you fill in another square?")
+            self.animated_speech.say("^start(animations/Stand/Gestures/Enthusiastic_5) Can you fill in another square?")
 
     def giveHint(self, sudoku):
         self.animated_speech.say("^start(animations/Stand/Gestures/ShowSky_1) Let me give you a hint.")
@@ -63,7 +63,7 @@ class Speech:
             sp.checkThisDigit(digit)
 
     def lastSquare(self):
-        self.tts.say("Only one box to go!")
+        self.animated_speech.say("^start(animations/Stand/Gestures/Enthusiastic_3) Only one box to go!")
 
     # outputs all the functions the nao can provide to the player
     def instructionMenu(self):
@@ -74,28 +74,28 @@ class Speech:
 
     # nao confirms it has seen the sudoku
     def seenSudoku(self):
-        self.tts.say("Nice one! Can you fill in a square already?")
+        self.animated_speech.say("^start(animations/Stand/Gestures/Hey_1) Nice one! Can you fill in a square already?")
 
     # outputs the general rules of the sudoku game
     def getGameRules(self):
-        self.tts.say("To complete your sudoku correctly, you must fill in al the empty squares.")
-        self.tts.say("When you are finished, the numbers 1 to 9 must appear exactly once in each row, column and box.")
-        self.tts.say("During the game, you must keep this in mind and use this knowledge to your advantage, while filling in squares.")
+        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_7) To complete your sudoku correctly, you must fill in al the empty squares.")
+        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_8) When you are finished, the numbers 1 to 9 must appear exactly once in each row, column and box.")
+        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_5) During the game, you must keep this in mind and use this knowledge to your advantage, while filling in squares.")
 
     # gives one of the four random hints
     def getRandomHint(self):
         randNum = randint(0,4)
         if randNum == 0:
-            self.tts.say("Have you already looked at the most filled in row, column or box?")
+            self.tts.say("^start(animations/Stand/Gestures/YouKnowWhat_1) Have you already looked at the most filled in row, column or box?")
 
         elif randNum == 1:
-            self.tts.say("Maybe you have to think one step ahead. Look which numbers' locations in a row, column or box are blocked by the numbers in the already filled in squares.")
+            self.tts.say("^start(animations/Stand/Gestures/YouKnowWhat_5) Maybe you have to think one step ahead. Look which numbers' locations in a row, column or box are blocked by the numbers in the already filled in squares.")
 
         elif randNum == 2:
-            self.tts.say("Which specific numbers are missing in the row, column or box you are looking at?")
+            self.tts.say("^start(animations/Stand/Gestures/YouKnowWhat_1) Which specific numbers are missing in the row, column or box you are looking at?")
 
         elif randNum == 3:
-            self.tts.say("Look at three boxes and see if there are two identical numbers in two of the boxes. Maybe you can fill in this number in the third box?")
+            self.tts.say("^start(animations/Stand/Gestures/YouKnowWhat_5) Look at three boxes and see if there are two identical numbers in two of the boxes. Maybe you can fill in this number in the third box?")
 
 
     # gets a sudoku and a tuple with coordinates of a square
@@ -103,11 +103,11 @@ class Speech:
     def getHint(self, sudoku, coordinates):
         row,col = coordinates
         digit = sudoku[row][col]
-        self.tts.say("The digit on that cell is "+str(digit))
+        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_3) The digit on that cell is "+str(digit))
 
     # reads aloud the given sudoku
     def readSudoku(self, sudoku):
-        self.tts.say("Okay. I will now read all the digits from the top left corner down to the bottom right corner.")
+        self.tts.say("^start(animations/Stand/Gestures/Me_1) Okay. I will now read all the digits from the top left corner down to the bottom right corner.")
         for row in range(9):
             for col in range(9):
                 digit = sudoku[row][col]
