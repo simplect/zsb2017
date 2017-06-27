@@ -10,7 +10,7 @@ from vision.image import Vision
 from random import randint
 
 # SET-UP
-IP = '169.254.236.47'
+IP = '169.254.35.27'
 PORT = 9559
 
 speech = Speech(IP, PORT)
@@ -46,6 +46,7 @@ humranEventWatcher = HumanTrackedEventWatcher(IP,PORT)
 def sudoku_searcher(require_answer = False):
     print("Started sudoku searcher")
     solution = (False, False)
+    sudoku = SudokuNao(([],[]))
     while not solution[0]:
         vision.getImage("sudoku.jpg")
         solution = solve("sudoku.jpg")
@@ -64,7 +65,7 @@ try:
     while True:
         begin = True
         end = False
-        sp.introSpeech()
+        speech.introSpeech()
         saysYes = lambda : True
         if saysYes():
             speech.askForSudoku()
