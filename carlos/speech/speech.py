@@ -225,3 +225,8 @@ class SudokuNao:
                 if sudoku[x][y] == 0:
                     numZeros++
         return numZeros
+
+    def checkIfEnd(self, sudoku):
+        if countZeros == 1:
+            return True
+        return False
