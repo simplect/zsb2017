@@ -174,8 +174,8 @@ class SudokuNao:
         self.sudoku = self.makeSudokuArray(strings[0])
         self.sudokuAnswer = self.makeSudokuArray(strings[1])
 
-    def updateSudoku(self, strings):
-        self.__init__(strings)
+    def updateSudoku(self, string):
+        self.sudoku = self.makeSudokuArray(string)
 
     def answerIsCorrect(self):
         for x in range(9):
