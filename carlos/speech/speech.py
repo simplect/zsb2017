@@ -31,6 +31,7 @@ class Speech:
                 sp.checkThisDigit(digit)
             askForSquare()
             if saysYes():
+                pass
                 # if correctAnswer():
                     # self.rightAnswer()
                     #break
@@ -46,7 +47,7 @@ class Speech:
         if begin == True:
             self.seenSudoku()
             begin == False
-        elif end == True
+        elif end == True:
             self.lastSquare()
         else:
             self.tts.say("Can you fill in another square?")

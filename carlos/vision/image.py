@@ -22,8 +22,8 @@ class Vision:
         imgClient = self._videoProxy.subscribe("python_client", resolution, colorSpace, 5)
 
         # Select camera.
-        #self._videoProxy.setParam(vision_definitions.kCameraSelectID,
-        #                          0)
+        self._videoProxy.setParam(vision_definitions.kCameraSelectID,
+                                  1)
 
         naoImage = self._videoProxy.getImageRemote(imgClient)
 
