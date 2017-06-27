@@ -29,7 +29,7 @@ class Speech:
             elif randNum == 2:
                 digit = SudokuNao.checkDigit(sudoku)
                 sp.checkThisDigit(digit)
-            askForSquare()
+            self.askForSquare(False, False)
             if saysYes():
                 pass
                 # if correctAnswer():
@@ -174,7 +174,14 @@ class SudokuNao:
         self.sudokuAnswer = self.makeSudokuArray(strings[1])
 
     def updateSudoku(self, string):
-        self.sudoku = self.makeSudokuArray(strings[0])
+        self.sudoku = self.makeSudokuArray(string)
+
+    def answerIsCorrect(self):
+        for x in range(9):
+            for y in range(9):
+                if sudoku[x][y] != 0 and sudoku[x][y] != sudokuAnswer[x][y]:
+                    return False
+        return True
 
     def printArrays(self):
         print("The start sudoku is: ")
@@ -210,3 +217,11 @@ class SudokuNao:
                 rowArray.append(int(x))
             sudokuArray.append(rowArray)
         return sudokuArray
+
+    def countZeros(self, sudoku):
+        numZeros = 0
+        for x in range(9):
+            for y in range(9):
+                if sudoku[x][y] == 0:
+                    numZeros++
+        return numZeros

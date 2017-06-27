@@ -79,21 +79,22 @@ begin = True
 end = False
 sp.introSpeech()
 if saysYes():
-    sp.askForSudoku()
-    waitForSudoku()
+    speech.askForSudoku()
+    scans = waitForSudoku()
+    sudoku = SudokuNao(scans)
     while(true):
-        end = checkIfEnd(sn.sudoku)
-        sp.askForSquare(begin, end)
+        end = checkIfEnd(sudoku.sudoku)
+        speech.askForSquare(begin, end)
         if saysYes():
-            sp.askForCheck()
-            waitForSudoku()
-            if rightAnswer:
-                sp.rightAnswer()
-                sn.sudoku = updateSudoku(answer)
+            speech.askForCheck()
+            scans = waitForSudoku()
+            sudoku.updateSudoku(scans[0])
+            if sn.answerIsCorrect():
+                speech.rightAnswer()
             else:
-                sp.wrongAnswerGetHint(sn.sudoku)
+                speech.wrongAnswerGetHint(sudoku.sudoku)
         else:
-            sp.giveHint(sn.sudoku)
+            speech.giveHint(sudoku.sudoku)
     if end:
         randomDancing()
         break
