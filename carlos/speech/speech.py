@@ -229,6 +229,6 @@ class SudokuNao:
         return numZeros
 
     def checkIfEnd(self, sudoku):
-        if countZeros == 1:
+        if self.countZeros(sudoku) == 1:
             return True
         return False
