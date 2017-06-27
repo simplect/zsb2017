@@ -173,6 +173,9 @@ class SudokuNao:
         self.sudoku = self.makeSudokuArray(strings[0])
         self.sudokuAnswer = self.makeSudokuArray(strings[1])
 
+    def updateSudoku(self, string):
+        self.sudoku = self.makeSudokuArray(strings[0])
+
     def printArrays(self):
         print("The start sudoku is: ")
         for x in self.sudoku:
