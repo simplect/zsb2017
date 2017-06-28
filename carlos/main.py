@@ -73,6 +73,7 @@ try:
 
             begin = True
             end = False
+            oldSudoku = []
 
             speech.introSpeech()
 
@@ -88,7 +89,11 @@ try:
                 while True:
                     sudoku.printArrays()
                     end = sudoku.checkIfEnd(sudoku.sudoku)
-                    speech.askForSquare(begin, end)
+                    if oldSudoku != sudoku.sudoku:
+                        speech.askForSquare(begin, end)
+                    else:
+                        speech.notFilledAnythingIn(self)
+                    oldSudoku = sudoku.sudoku
                     if feetWatcher.registerQuestion():
                         speech.askForCheck()
                         idle.stopForScan()
