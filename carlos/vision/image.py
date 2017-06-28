@@ -23,7 +23,7 @@ class Vision:
 
         # Select camera.
         self._videoProxy.setParam(vision_definitions.kCameraSelectID,
-                                  0)
+                                  1)
 
         naoImage = self._videoProxy.getImageRemote(imgClient)
 

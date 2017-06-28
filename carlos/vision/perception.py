@@ -44,7 +44,7 @@ class HumanTrackedEventWatcher(ALModule):
 #            self.face_det.learnFace("Merin")
 #            print("Learned new face")
         else:
-            self.current_name = None
+#            self.current_name = None
             self.face_det.setTrackingEnabled(False)
 
     def onPeopleLeft(self, key, value, msg):

@@ -12,15 +12,14 @@ class IdleBehaviour:
         self.basic_awareness = ALProxy("ALBasicAwareness")
 
         self.motion.wakeUp()
-        self.basic_awareness.startAwareness()
-        self.basic_awareness.setEngagementMode("FullyEngaged")
 
-        self.posture.goToPosture("StandInit", 0.5)
+        self.posture.goToPosture("StandInit", 2)
 
+        self.resume()
 
     def test(self):
          # Send robot to Pose Init
-         self.posture.goToPosture("StandInit", 0.5)
+         self.posture.goToPosture("StandInit", 2)
          self.motion.wbEnable(True)
          # Example showing how to com go to LLeg.
          supportLeg = "LLeg"
@@ -31,20 +30,42 @@ class IdleBehaviour:
          self.motion.wbGoToBalance(supportLeg, duration)
          self.motion.wbEnable(False)
 
+    def stopForScan(self):
+        self.basic_awareness.stopAwareness()
+        self.stand()
+
+        # Example showing multiple trajectories
+        # Interpolate the head yaw to 1.0 radian and back to zero in 2.0 seconds
+        # while interpolating HeadPitch up and down over a longer period.
+        names  = ["RHipPitch","LHipPitch", "HeadPitch"]
+        # Each joint can have lists of different lengths, but the number of
+        # angles and the number of times must be the same for each joint.
+        # Here, the second joint ("HeadPitch") has three angles, and
+        # three corresponding times.
+        angleLists  = [[-1.0], [-1.0], [-1.0]]
+        timeLists   = [[3.0], [3.0], [3.0]]
+        isAbsolute  = True
+        self.motion.angleInterpolation(names, angleLists, timeLists, isAbsolute)
+    
+    def resume(self):
+        self.stand()
+        self.basic_awareness.startAwareness()
+        self.basic_awareness.setEngagementMode("SemiEngaged")
+    
     def doFunny(self):
         pass
 
     def sit(self):
-        self.posture.goToPosture("Sit", 1.0)
+        self.posture.goToPosture("Sit", 3.0)
 
     def sitRelax(self):
-        self.posture.goToPosture("SitRelax", 1.0)
+        self.posture.goToPosture("SitRelax", 2.0)
 
     def stand(self):
-        self.posture.goToPosture("Stand", 1.0)
+        self.posture.goToPosture("Stand", 0.0)
 
     def crouch(self):
-        self.posture.goToPosture("Crouch", 1.0)
+        self.posture.goToPosture("Crouch", 2.0)
 
     def sleep(self):
         print("Sleeping")

@@ -56,6 +56,9 @@ class Speech:
         else:
             self.animated_speech.say("^start(animations/Stand/Gestures/Enthusiastic_5) Can you fill in another square?")
 
+    def notFilledAnythingIn(self):
+        self.animated_speech.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) You didn't fill in anything. Please, do so now.")
+
     def giveHint(self, sudoku):
         self.animated_speech.say("^start(animations/Stand/Gestures/ShowSky_1) Let me give you a hint.")
         randNum = randint(1,2)
@@ -202,7 +205,7 @@ class SudokuNao:
         best_count = 0
         number = 0
         for i in range(1,10):
-            count = counter(i, sudoku)
+            count = self.counter(i, sudoku)
             if count > best_count and count < 9:
                 best_count = count
                 number = i
