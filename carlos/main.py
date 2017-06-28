@@ -13,7 +13,7 @@ from sensors.feet import Feet
 from random import randint
 
 # SET-UP
-IP = '169.254.139.223'
+IP = '169.254.35.27'
 PORT = 9559
 
 

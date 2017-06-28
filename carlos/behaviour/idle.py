@@ -13,13 +13,13 @@ class IdleBehaviour:
 
         self.motion.wakeUp()
 
-        self.posture.goToPosture("StandInit", 2)
+        self.posture.goToPosture("StandInit", 0.4)
 
         self.resume()
 
     def test(self):
          # Send robot to Pose Init
-         self.posture.goToPosture("StandInit", 2)
+         self.posture.goToPosture("StandInit", 0.5)
          self.motion.wbEnable(True)
          # Example showing how to com go to LLeg.
          supportLeg = "LLeg"
@@ -48,24 +48,24 @@ class IdleBehaviour:
         self.motion.angleInterpolation(names, angleLists, timeLists, isAbsolute)
     
     def resume(self):
-        self.stand()
         self.basic_awareness.startAwareness()
         self.basic_awareness.setEngagementMode("SemiEngaged")
+        self.stand()
     
     def doFunny(self):
         pass
 
     def sit(self):
-        self.posture.goToPosture("Sit", 3.0)
+        self.posture.goToPosture("Sit", 0.5)
 
     def sitRelax(self):
-        self.posture.goToPosture("SitRelax", 2.0)
+        self.posture.goToPosture("SitRelax", 0.5)
 
     def stand(self):
-        self.posture.goToPosture("Stand", 0.0)
+        self.posture.goToPosture("Stand", 0.4)
 
     def crouch(self):
-        self.posture.goToPosture("Crouch", 2.0)
+        self.posture.goToPosture("Crouch", 0.5)
 
     def sleep(self):
         print("Sleeping")
