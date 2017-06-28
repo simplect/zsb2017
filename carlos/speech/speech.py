@@ -34,6 +34,8 @@ class Speech:
                 digit = sudokuNao.checkDigit(sudoku)
                 self.checkThisDigit(digit)
             self.askForSquare(False, False)
+            # TODO, FIX THIS
+            return
             if saysYes():
                 pass
                 # if correctAnswer():
