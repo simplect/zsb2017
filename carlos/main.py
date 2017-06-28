@@ -85,7 +85,6 @@ try:
                     if feetWatcher.registerQuestion():
                         speech.askForCheck()
                         scans = sudoku_searcher(prev = sudoku.sudoku)
-
                         sudoku.updateSudoku(scans[0])
                         if sudoku.answerIsCorrect():
                             speech.rightAnswer()
