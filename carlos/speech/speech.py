@@ -3,16 +3,18 @@ import time
 from random import randint
 
 class Speech:
+    
+    current_name = None
 
     # sets the volume to a default value
-    def __init__(self, IP, PORT):
-        self.tts = ALProxy("ALTextToSpeech", IP, PORT)
-        self.animated_speech = ALProxy("ALAnimatedSpeech", IP, PORT)
+    def __init__(self):
+        self.tts = ALProxy("ALTextToSpeech")
+        self.animated_speech = ALProxy("ALAnimatedSpeech")
         self.tts.setVolume(0.8)
 
     # outputs the intro monologuew
     def introSpeech(self):
-        self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hey! Do you want to make a sudoku with me?")
+        self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hey {}! Do you want to make a sudoku with me?".format(self.current_name))
 
     def askForSudoku(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Let me see your sudoku puzzle before we start. ^stop(animations/Stand/Gestures/Explain_1)")
@@ -24,11 +26,12 @@ class Speech:
         self.animated_speech.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) Oops! I think you made a mistake. Do you want a hint?")
         while(True):
             self.giveHint(sudoku)
-            randNum = randint()
+            randNum = randint(1,2)
             if randNum == 1:
                 self.getRandomHint()
             elif randNum == 2:
-                digit = SudokuNao.checkDigit(sudoku)
+                sudokuNao = SudokuNao(sudoku)
+                digit = sudokuNao.checkDigit(sudoku)
                 self.checkThisDigit(digit)
             self.askForSquare(False, False)
             if saysYes():
@@ -55,12 +58,13 @@ class Speech:
 
     def giveHint(self, sudoku):
         self.animated_speech.say("^start(animations/Stand/Gestures/ShowSky_1) Let me give you a hint.")
-        randNum = randint()
+        randNum = randint(1,2)
         if randNum == 1:
-            sp.getRandomHint()
+            self.getRandomHint()
         elif randNum == 2:
-            digit = SudokuNao.checkDigit(sudoku)
-            sp.checkThisDigit(digit)
+            sudokuNao = SudokuNao(sudoku)
+            digit = sudokuNao.checkDigit(sudoku)
+            self.checkThisDigit(digit)
 
     def lastSquare(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Enthusiastic_3) Only one box to go!")

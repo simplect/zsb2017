@@ -7,18 +7,17 @@ class HumanTrackedEventWatcher(ALModule):
 
     current_name = None
 
-    def __init__(self, IP, PORT):
-        self.ip = IP
-        self.port = PORT
+    def __init__(self):
         ALModule.__init__(self, "humanEventWatcher")
 
         global memory
-        memory = ALProxy("ALMemory", IP, PORT)
+        memory = ALProxy("ALMemory")
         self.face_det = ALProxy("ALFaceDetection")
+        self.face_det.setTrackingEnabled(False)
         self.face_char = ALProxy("ALFaceCharacteristics")
 
         self.tts = ALProxy("ALTextToSpeech")
-        #self.face_det.forgetPerson("Merijn")
+#        self.face_det.forgetPerson("Merin")
 
         self.people = ALProxy("ALPeoplePerception")
         memory.subscribeToEvent("ALBasicAwareness/HumanTracked",
@@ -34,8 +33,6 @@ class HumanTrackedEventWatcher(ALModule):
             "humanEventWatcher",
             "onSmileDetected")
 
-
-
     def onHumanTracked(self, key, value, msg):
         """ callback for event HumanTracked """
         print "got HumanTracked: detected person with ID:", str(value)
@@ -44,10 +41,11 @@ class HumanTrackedEventWatcher(ALModule):
             [x, y, z] = position_human
             print "The tracked person with ID", value, "is at the position:", \
                 "x=", x, "/ y=",  y, "/ z=", z
-            #self.face_det.learnFace("Hannah")
-            #print("Learned new face")
+#            self.face_det.learnFace("Merin")
+#            print("Learned new face")
         else:
             self.current_name = None
+            self.face_det.setTrackingEnabled(False)
 
     def onPeopleLeft(self, key, value, msg):
         """ callback for event PeopleLeft """
@@ -55,7 +53,10 @@ class HumanTrackedEventWatcher(ALModule):
 
     def onFaceDetected(self, key, value, msg):
         """ callback for event PeopleLeft """
-        name = value[1][0][1][2]
+        try:
+            name = value[1][0][1][2]
+        except IndexError:
+            return
         memory.unsubscribeToEvent("FaceDetected",
                                    "humanEventWatcher")
 
@@ -63,6 +64,7 @@ class HumanTrackedEventWatcher(ALModule):
             print "Detected ", name
             self.tts.say("Hi there {}, good to see you again.".format(name))
             self.current_name = name
+            self.face_det.setTrackingEnabled(True)
 
         memory.subscribeToEvent("FaceDetected",
             "humanEventWatcher",
@@ -73,6 +75,7 @@ class HumanTrackedEventWatcher(ALModule):
         memory_key = "PeoplePerception/Person/" + str(id_person_tracked) + \
                      "/PositionInWorldFrame"
         return memory.getData(memory_key)
+
 
     def onSmileDetected(self, *_args):
         """ This will be called each time a face is

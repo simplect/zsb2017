@@ -7,8 +7,8 @@ from naoqi import ALProxy, ALModule
 class Move:
 
     # sets the volume to a default value
-    def __init__(self, IP, PORT):
-        self.motion = ALProxy("ALMotion", IP, PORT)
+    def __init__(self):
+        self.motion = ALProxy("ALMotion")
 
     def walkForward(self):
         self.motion.moveInit()

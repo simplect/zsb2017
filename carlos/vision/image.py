@@ -10,8 +10,8 @@ import vision_definitions
 class Vision:
 
     # sets the volume to a default value
-    def __init__(self, IP, PORT):
-        self._videoProxy = ALProxy("ALVideoDevice", IP, PORT)
+    def __init__(self):
+        self._videoProxy = ALProxy("ALVideoDevice")
 
     def getImage(self, img_name):
         resolution = vision_definitions.k960p  # 1280

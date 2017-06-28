@@ -6,15 +6,17 @@ from naoqi import ALProxy, ALModule
 class IdleBehaviour:
 
     # sets the volume to a default value
-    def __init__(self, IP, PORT):
-        self.posture = ALProxy("ALRobotPosture", IP, PORT)
-        self.motion = ALProxy("ALMotion", IP, PORT)
-        self.basic_awareness = ALProxy("ALBasicAwareness", IP, PORT)
+    def __init__(self):
+        self.posture = ALProxy("ALRobotPosture")
+        self.motion = ALProxy("ALMotion")
+        self.basic_awareness = ALProxy("ALBasicAwareness")
 
-        print("Waking up")
         self.motion.wakeUp()
         self.basic_awareness.startAwareness()
         self.basic_awareness.setEngagementMode("FullyEngaged")
+
+        self.posture.goToPosture("StandInit", 0.5)
+
 
     def test(self):
          # Send robot to Pose Init

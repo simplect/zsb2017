@@ -8,36 +8,36 @@ from behaviour.idle import IdleBehaviour
 from behaviour.move import Move
 from vision.image import Vision
 from vision.perception import HumanTrackedEventWatcher
+from sensors.feet import Feet
 
 from random import randint
 
 # SET-UP
-IP = '169.254.65.64'
+IP = '169.254.35.27'
 PORT = 9559
 
-speech = Speech(IP, PORT)
-idle = IdleBehaviour(IP, PORT)
-move = Move(IP, PORT)
-vision = Vision(IP, PORT)
 
 # We need this broker to be able to construct
 # NAOqi modules and subscribe to other modules
 # The broker must stay alive until the program exists
-myBroker = ALBroker("myBroker",
+myBroker = ALBroker("carlosBroker",
    "0.0.0.0",   # listen to anyone
    0,           # find a free port and use it
    IP,         # parent broker IP
    PORT)       # parent broker port
 
-# Global variable to store the FaceDetection module instance
-memory = None
-
-# Warning: FaceDetection must be a global variable
-# The name given to the constructor must be the name of the
-# variable
+# AL MODULES
 global humanEventWatcher
+global feetWatcher
 
-humanEventWatcher = HumanTrackedEventWatcher(IP,PORT)
+humanEventWatcher = HumanTrackedEventWatcher()
+feetWatcher = Feet()
+# Normal classes
+speech = Speech()
+idle = IdleBehaviour()
+move = Move()
+vision = Vision()
+
 
 # Thread functions
 def sudoku_searcher(require_answer = False, prev = False):
@@ -66,37 +66,40 @@ def sudoku_searcher(require_answer = False, prev = False):
 
 # MAIN CARLOS
 try:
-    while False:
-        begin = True
-        end = False
-        speech.introSpeech()
-        saysYes = lambda : True
-        if saysYes():
-            speech.askForSudoku()
-            scans = sudoku_searcher(require_answer=True)
-            sudoku = SudokuNao(scans)
+    while True:
+        time.sleep(2)
+        while humanEventWatcher.current_name:
+            speech.current_name = humanEventWatcher.current_name
+            begin = True
+            end = False
+            speech.introSpeech()
+            if feetWatcher.registerQuestion():
+                speech.askForSudoku()
+                scans = sudoku_searcher(require_answer=True)
+                sudoku = SudokuNao(scans)
 
-            while True:
-                sudoku.printArrays()
-                end = sudoku.checkIfEnd(sudoku.sudoku)
-                speech.askForSquare(begin, end)
-                if saysYes():
-                    speech.askForCheck()
-                    scans = sudoku_searcher(prev = sudoku.sudoku)
+                while True:
+                    sudoku.printArrays()
+                    end = sudoku.checkIfEnd(sudoku.sudoku)
+                    speech.askForSquare(begin, end)
+                    if feetWatcher.registerQuestion():
+                        speech.askForCheck()
+                        scans = sudoku_searcher(prev = sudoku.sudoku)
 
-                    sudoku.updateSudoku(scans[0])
-                    if sudoku.answerIsCorrect():
-                        speech.rightAnswer()
+                        sudoku.updateSudoku(scans[0])
+                        if sudoku.answerIsCorrect():
+                            speech.rightAnswer()
+                        else:
+                            sudoku.printArrays()
+                            speech.wrongAnswerGetHint(sudoku.sudoku)
                     else:
-                        sudoku.printArrays()
-                        speech.wrongAnswerGetHint(sudoku.sudoku)
-                else:
-                    speech.giveHint(sudoku.sudoku)
-            if end:
-                #randomDancing()
-                break
-        else:
-            print("game not entered")
+                        speech.giveHint(sudoku.sudoku)
+                if end:
+                    #randomDancing()
+                    break
+            else:
+                print("game not entered")
+            humanEventWatcher.current_name = None
     while True:
         time.sleep(5)
 
