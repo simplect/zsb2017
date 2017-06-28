@@ -56,6 +56,9 @@ class Speech:
         else:
             self.animated_speech.say("^start(animations/Stand/Gestures/Enthusiastic_5) Can you fill in another square?")
 
+    def notFilledAnythingIn(self):
+        self.animated_speech.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) You didn't fill in anything. Please, do so now.")
+
     def giveHint(self, sudoku):
         self.animated_speech.say("^start(animations/Stand/Gestures/ShowSky_1) Let me give you a hint.")
         randNum = randint(1,2)
