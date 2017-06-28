@@ -94,7 +94,6 @@ try:
                         idle.stopForScan()
                         scans = sudoku_searcher(prev = sudoku.sudoku)
                         idle.resume()
-
                         sudoku.updateSudoku(scans[0])
                         if sudoku.answerIsCorrect():
                             speech.rightAnswer()
@@ -104,6 +103,8 @@ try:
                     else:
                         speech.giveHint(sudoku.sudoku)
                 if end:
+                    #aup = ALProxy('ALAudioPlayer', IP, PORT)
+                    #song = aup.post.playFile("./speech/Pharrell_Williams_-_Happy_Official_Music_Video_.wav")
                     #randomDancing()
                     break
             else:
