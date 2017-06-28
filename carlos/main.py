@@ -13,7 +13,7 @@ from sensors.feet import Feet
 from random import randint
 
 # SET-UP
-IP = '169.254.35.27'
+IP = '169.254.139.223'
 PORT = 9559
 
 
@@ -70,12 +70,19 @@ try:
         time.sleep(2)
         while humanEventWatcher.current_name:
             speech.current_name = humanEventWatcher.current_name
+
             begin = True
             end = False
+
             speech.introSpeech()
+
             if feetWatcher.registerQuestion():
                 speech.askForSudoku()
+                idle.stand()
+                idle.basic_awareness.stopAwareness()
+                idle.stopForScan()
                 scans = sudoku_searcher(require_answer=True)
+                idle.resume()
                 sudoku = SudokuNao(scans)
 
                 while True:
@@ -84,7 +91,9 @@ try:
                     speech.askForSquare(begin, end)
                     if feetWatcher.registerQuestion():
                         speech.askForCheck()
+                        idle.stopForScan()
                         scans = sudoku_searcher(prev = sudoku.sudoku)
+                        idle.resume()
 
                         sudoku.updateSudoku(scans[0])
                         if sudoku.answerIsCorrect():
@@ -107,6 +116,6 @@ except KeyboardInterrupt:
     print
     print "Interrupted by user, shutting down"
     humanEventWatcher.sayGoodbye()
-    myBroker.shutdown()
     idle.sleep()
+    myBroker.shutdown()
     sys.exit(0)
