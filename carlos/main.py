@@ -94,6 +94,8 @@ try:
                     else:
                         speech.giveHint(sudoku.sudoku)
                 if end:
+                    #aup = ALProxy('ALAudioPlayer', IP, PORT)
+                    #song = aup.post.playFile("./speech/Pharrell_Williams_-_Happy_Official_Music_Video_.wav")
                     #randomDancing()
                     break
             else:
