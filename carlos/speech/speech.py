@@ -3,7 +3,7 @@ import time
 from random import randint
 
 class Speech:
-    
+
     current_name = None
 
     # sets the volume to a default value
@@ -14,7 +14,7 @@ class Speech:
 
     # outputs the intro monologuew
     def introSpeech(self):
-        self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hey {}! Do you want to make a sudoku with me?".format(self.current_name))
+        self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hey {}! Do you want to make a sudoku with me? You can press on my feat to answer my questions.".format(self.current_name))
 
     def askForSudoku(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Let me see your sudoku puzzle before we start. ^stop(animations/Stand/Gestures/Explain_1)")
@@ -62,7 +62,7 @@ class Speech:
         if randNum == 1:
             self.getRandomHint()
         elif randNum == 2:
-            sudokuNao = SudokuNao(sudoku)
+            sudokuNao = SudokuNao(([],[]))
             digit = sudokuNao.checkDigit(sudoku)
             self.checkThisDigit(digit)
 
