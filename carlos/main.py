@@ -93,6 +93,7 @@ try:
                         speech.askForSquare(begin, end)
                     else:
                         speech.notFilledAnythingIn(self)
+                    oldSudoku = sudoku.sudoku
                     if feetWatcher.registerQuestion():
                         speech.askForCheck()
                         idle.stopForScan()
