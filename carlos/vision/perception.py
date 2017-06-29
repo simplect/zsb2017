@@ -12,24 +12,29 @@ class HumanTrackedEventWatcher(ALModule):
         ALModule.__init__(self, "humanEventWatcher")
 
         global memory
+
         memory = ALProxy("ALMemory")
         self.face_det = ALProxy("ALFaceDetection")
         self.face_det.setTrackingEnabled(False)
+
         self.face_char = ALProxy("ALFaceCharacteristics")
 
         self.tts = ALProxy("ALTextToSpeech")
-#        self.face_det.forgetPerson("Merin")
 
         self.people = ALProxy("ALPeoplePerception")
+
         memory.subscribeToEvent("ALBasicAwareness/HumanTracked",
                                 "humanEventWatcher",
                                 "onHumanTracked")
+
         memory.subscribeToEvent("ALBasicAwareness/PeopleLeft",
                                 "humanEventWatcher",
                                 "onPeopleLeft")
+
         memory.subscribeToEvent("FaceDetected",
             "humanEventWatcher",
             "onFaceDetected")
+
         memory.subscribeToEvent("FaceCharacteristics/PersonSmiling",
             "humanEventWatcher",
             "onSmileDetected")

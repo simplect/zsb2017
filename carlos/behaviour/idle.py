@@ -13,7 +13,7 @@ class IdleBehaviour:
 
         self.motion.wakeUp()
 
-        self.posture.goToPosture("StandInit", 0.4)
+        self.posture.goToPosture("StandInit", 0.5)
 
         self.resume()
 
@@ -62,7 +62,7 @@ class IdleBehaviour:
         self.posture.goToPosture("SitRelax", 0.5)
 
     def stand(self):
-        self.posture.goToPosture("Stand", 0.4)
+        self.posture.goToPosture("Stand", 0.5)
 
     def crouch(self):
         self.posture.goToPosture("Crouch", 0.5)

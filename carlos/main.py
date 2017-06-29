@@ -38,10 +38,15 @@ idle = IdleBehaviour()
 move = Move()
 vision = Vision()
 
-
 # Thread functions
 def sudoku_searcher(require_answer = False, prev = False):
     print("Started sudoku searcher")
+    # Assume scanning position and stop normal head movements
+
+    idle.stand()
+    idle.basic_awareness.stopAwareness()
+    idle.stopForScan()
+
     solution = (False, False)
     sudoku = SudokuNao(([],[]))
     while not solution[0]:
@@ -62,70 +67,79 @@ def sudoku_searcher(require_answer = False, prev = False):
                         prev[x][y] != new_sudoku[x][y]:
                             solution = (False, False)
 
+    idle.resume()
     return solution
 
 # MAIN CARLOS
 try:
     while True:
-        time.sleep(2)
-        while humanEventWatcher.current_name:
-            speech.current_name = humanEventWatcher.current_name
-            speech.current_name = "Merin"
+        if not humanEventWatcher.current_name:
+            time.sleep(2)
+            continue
 
-            begin = True
-            end = False
-            oldSudoku = []
+        speech.current_name = humanEventWatcher.current_name
 
-            speech.introSpeech()
+        begin = True
+        end = False
+        oldSudoku = []
 
-            if feetWatcher.registerQuestion():
-                speech.askForSudoku()
-                idle.stand()
-                idle.basic_awareness.stopAwareness()
-                idle.stopForScan()
-                scans = sudoku_searcher(require_answer=True)
-                idle.resume()
-                sudoku = SudokuNao(scans)
+        speech.introSpeech()
 
-                while True:
-                    sudoku.printArrays()
-                    end = sudoku.checkIfEnd(sudoku.sudoku)
-                    speech.askForSquare(begin, end)
+        if not feetWatcher.registerQuestion():
+            speech.bye()
+            humanEventWatcher.findNewHuman()
+            continue
+        
+        speech.askForRules()
 
-                    """
-                    if oldSudoku != sudoku.sudoku:
-                        speech.askForSquare(begin, end)
-                    else:
-                        speech.notFilledAnythingIn()
-                        """
-                    oldSudoku = sudoku.sudoku
-                    if feetWatcher.registerQuestion():
-                        speech.askForCheck()
-                        idle.stopForScan()
-                        scans = sudoku_searcher(prev = sudoku.sudoku)
-                        idle.resume()
-                        sudoku.updateSudoku(scans[0])
-                        if sudoku.answerIsCorrect():
-                            speech.rightAnswer()
-                        else:
-                            sudoku.printArrays()
-                            speech.wrongAnswerGetHint(sudoku.sudoku)
-                    else:
-                        speech.giveHint(sudoku.sudoku)
-                if end:
-                    aup = ALProxy('ALAudioPlayer')
-                    song = aup.post.playFile("/home/nao/songs/happy.wav")
-                    #move.randomDancing()
-                    feet.doRasta()
+        if feetWatcher.registerQuestion():
+            speech.getGameRules()
 
-                    time.sleep(60)
-                    aup.stopAll()
-                    break
+        speech.askForSudoku()
+ 
+        scans = sudoku_searcher(require_answer=True)
+
+        sudoku = SudokuNao(scans)
+        
+        # Main solving loop
+        while True:
+            sudoku.printArrays()
+            end = sudoku.checkIfEnd(sudoku.sudoku)
+            speech.askForSquare(begin, end)
+
+            """
+            if oldSudoku != sudoku.sudoku:
+                speech.askForSquare(begin, end)
             else:
-                print("game not entered")
-                humanEventWatcher.findNewHuman()
-    while True:
-        time.sleep(5)
+                speech.notFilledAnythingIn()
+                """
+            oldSudoku = sudoku.sudoku
+            if feetWatcher.registerQuestion():
+                speech.askForCheck()
+
+                scans = sudoku_searcher(prev = sudoku.sudoku)
+                sudoku.updateSudoku(scans[0])
+
+                if sudoku.answerIsCorrect():
+                    speech.rightAnswer()
+                else:
+                    sudoku.printArrays()
+                    speech.wrongAnswerGetHint(sudoku.sudoku)
+
+            else:
+                sudoku.printArrays()
+                speech.wrongAnswerGetHint(sudoku.sudoku)
+        else:
+            speech.giveHint(sudoku.sudoku)
+        if end:
+            aup = ALProxy('ALAudioPlayer')
+            song = aup.post.playFile("/home/nao/songs/happy.wav")
+            #move.randomDancing()
+            feet.doRasta()
+
+            time.sleep(60)
+            aup.stopAll()
+            break
 
 except KeyboardInterrupt:
     print
