@@ -16,7 +16,7 @@ class Speech:
         if randNum == 0:
             self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hey {}! Do you want to make a sudoku with me? You can touch my feet to answer my questions.".format(self.current_name))
         if randNum == 1:
-            self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hello {}! Do you want to make a sudoku with me? Press on my feet to answer my questions.".format(self.current_name))
+            self.animated_speech.say("^start(animations/Stand/Gestures/You_1) {}! Do you want to make a sudoku with me? Press on my feet to answer my questions.".format(self.current_name))
         if randNum == 2:
             self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hi {}! Would you like to make a sudoku with me? You can press on my feet to answer my questions.".format(self.current_name))
 
