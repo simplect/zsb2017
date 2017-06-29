@@ -14,7 +14,7 @@ class Speech:
 
     # outputs the intro monologuew
     def introSpeech(self):
-        self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hey {}! Do you want to make a sudoku with me? You can press on my feat to answer my questions.".format(self.current_name))
+        self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hey {}! Do you want to make a sudoku with me? You can press on my feet to answer my questions.".format(self.current_name))
 
     def askForSudoku(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Let me see your sudoku puzzle before we start. ^stop(animations/Stand/Gestures/Explain_1)")
