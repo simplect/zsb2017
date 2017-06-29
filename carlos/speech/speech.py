@@ -103,7 +103,7 @@ class Speech:
 
     # tells the player to look at a given number
     def look_for_number(self, digit):
-        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Here's a tip: maybe you can fill out number"+ str(digit))
+        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Maybe you can fill out number"+ str(digit))
 
 class SudokuNao:
     def __init__(self, strings):
