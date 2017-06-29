@@ -6,6 +6,7 @@ class HumanTrackedEventWatcher(ALModule):
     """ A module to react to HumanTracked and PeopleLeft events """
 
     current_name = None
+    names_seen = []
 
     def __init__(self):
         ALModule.__init__(self, "humanEventWatcher")
@@ -41,11 +42,8 @@ class HumanTrackedEventWatcher(ALModule):
             [x, y, z] = position_human
             print "The tracked person with ID", value, "is at the position:", \
                 "x=", x, "/ y=",  y, "/ z=", z
-#            self.face_det.learnFace("Merin")
-#            print("Learned new face")
         else:
-#            self.current_name = None
-            self.face_det.setTrackingEnabled(False)
+            self.findNewHuman()
 
     def onPeopleLeft(self, key, value, msg):
         """ callback for event PeopleLeft """
@@ -64,6 +62,7 @@ class HumanTrackedEventWatcher(ALModule):
             print "Detected ", name
             self.tts.say("Hi there {}, good to see you again.".format(name))
             self.current_name = name
+            self.seen_names.append(name)
             self.face_det.setTrackingEnabled(True)
 
         memory.subscribeToEvent("FaceDetected",
@@ -78,23 +77,34 @@ class HumanTrackedEventWatcher(ALModule):
 
 
     def onSmileDetected(self, *_args):
-        """ This will be called each time a face is
-        detected.
-
+        """ Smile event
         """
         # Unsubscribe to the event when talking,
         # to avoid repetitions
         memory.unsubscribeToEvent("FaceCharacteristics/PersonSmiling",
             "humanEventWatcher")
+
         if self.current_name:
             self.tts.say("{}, you have such a cute smile.".format(self.current_name))
-            print("like event")
+            print("Like event")
             time.sleep(30)
-            # Subscribe again to the event
+
+        # Subscribe again to the event
         memory.subscribeToEvent("FaceCharacteristics/PersonSmiling",
             "face_detection",
             "onSmileDetected")
 
     def sayGoodbye(self):
         if self.current_name:
+            
             self.tts.say("Goodbye {}".format(self.current_name))
+    
+    def findNewHuman(self):
+            self.current_name = None
+            self.face_det.setTrackingEnabled(False)
+
+    def learnNewHuman(self, name):
+            self.face_det.learnFace(name)
+            print("Learned new face")
+
+

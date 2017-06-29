@@ -13,7 +13,7 @@ from sensors.feet import Feet
 from random import randint
 
 # SET-UP
-IP = '169.254.35.27'
+IP = '169.254.131.247'
 PORT = 9559
 
 
@@ -70,6 +70,7 @@ try:
         time.sleep(2)
         while humanEventWatcher.current_name:
             speech.current_name = humanEventWatcher.current_name
+            speech.current_name = "Merin"
 
             begin = True
             end = False
@@ -112,13 +113,17 @@ try:
                     else:
                         speech.giveHint(sudoku.sudoku)
                 if end:
-                    #aup = ALProxy('ALAudioPlayer', IP, PORT)
-                    #song = aup.post.playFile("./speech/Pharrell_Williams_-_Happy_Official_Music_Video_.wav")
-                    #randomDancing()
+                    aup = ALProxy('ALAudioPlayer')
+                    song = aup.post.playFile("/home/nao/songs/happy.wav")
+                    #move.randomDancing()
+                    feet.doRasta()
+
+                    time.sleep(60)
+                    aup.stopAll()
                     break
             else:
                 print("game not entered")
-            humanEventWatcher.current_name = None
+                humanEventWatcher.findNewHuman()
     while True:
         time.sleep(5)
 
