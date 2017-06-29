@@ -23,9 +23,9 @@ class Speech:
     def ask_for_rules(self):
         randNum = randint(0,1)
         if randNum == 0:
-            self.animated_speech.say("^start(animations/Stand/Gestures/Explain_2) Would you like to hear the rules?")
+            self.animated_speech.say("^start(animations/Stand/Gestures/Explain_2) Would you like to hear the rules of a sudoku?")
         if randNum == 1:
-            self.animated_speech.say("^start(animations/Stand/Gestures/Explain_2) Do you want to start with the rules?")
+            self.animated_speech.say("^start(animations/Stand/Gestures/Explain_2) Do you want to start with the rules of a sudoku?")
 
     def ask_for_sudoku(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Let me see your sudoku puzzle before we start. ^stop(animations/Stand/Gestures/Explain_1)")
@@ -51,7 +51,7 @@ class Speech:
         self.animated_speech.say("^start(animations/Stand/Gestures/Yes_1) Well done!")
 
     def ask_for_square(self):
-        if self.countZeros(sudoku) == 1:
+        if self.count_zeros(sudoku) == 1:
             self.animated_speech.say("^start(animations/Stand/Gestures/Enthusiastic_3) Only one square to go, do you know the answer?")
         else:
             self.animated_speech.say("^start(animations/Stand/Gestures/Enthusiastic_5) Can you fill in another square?")
@@ -66,8 +66,8 @@ class Speech:
             self.get_random_hint()
         elif randNum == 2:
             sudokuNao = SudokuNao(([],[]))
-            digit = sudokuNao.best_number(sudoku)
-            self.look_for_number(digit)
+            number = sudokuNao.best_number(sudoku)
+            self.look_for_number(number)
 
     # nao confirms it has seen the sudoku
     def seen_sudoku(self):
@@ -91,13 +91,10 @@ class Speech:
         randNum = randint(0,3)
         if randNum == 0:
             self.animated_speech.say("^start(animations/Stand/Gestures/YouKnowWhat_1) Have you already looked at the most filled in row, column or box?")
-
         elif randNum == 1:
             self.animated_speech.say("^start(animations/Stand/Gestures/YouKnowWhat_5) Maybe you have to think one step ahead. Look which numbers' locations in a row, column or box are blocked by the numbers in the already filled in squares.")
-
         elif randNum == 2:
             self.animated_speech.say("^start(animations/Stand/Gestures/YouKnowWhat_1) Which specific numbers are missing in the row, column or box you are looking at?")
-
         elif randNum == 3:
             self.animated_speech.say("^start(animations/Stand/Gestures/YouKnowWhat_5) Look at three boxes and see if there are two identical numbers in two of the boxes. Maybe you can fill in this number in the third box?")
 
