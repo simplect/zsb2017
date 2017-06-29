@@ -17,20 +17,7 @@ class IdleBehaviour:
 
         self.resume()
 
-    def test(self):
-         # Send robot to Pose Init
-         self.posture.goToPosture("StandInit", 0.5)
-         self.motion.wbEnable(True)
-         # Example showing how to com go to LLeg.
-         supportLeg = "LLeg"
-         duration   = 2.0
-         self.motion.wbGoToBalance(supportLeg, duration)
-         supportLeg = "RLeg"
-         duration   = 2.0
-         self.motion.wbGoToBalance(supportLeg, duration)
-         self.motion.wbEnable(False)
-
-    def stopForScan(self):
+    def stop_for_scan(self):
         self.basic_awareness.stopAwareness()
         self.stand()
 
@@ -77,10 +64,3 @@ class IdleBehaviour:
             print("tudele")
             # TODO: Write some funny things here
             time.sleep(20)
-
-
-
-
-
-
-
