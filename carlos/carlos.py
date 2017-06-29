@@ -25,16 +25,10 @@ carlos_broker = ALBroker("carlosBroker",
    IP,         # parent broker IP
    PORT)       # parent broker port
 
-global human
-global feet
-
-human = Human()
-feet = Feet()
-
 class Carlos:
     def __init__(self):
 
- 
+         
         # Normal classes
         self.speech = Speech()
         self.posture = Posture()
@@ -43,10 +37,16 @@ class Carlos:
 
 
     def play_sudoku(self):
+
         if not human.current_name:
             return
 
+
         self.speech.current_name = human.current_name
+
+        self.speech.hi()
+    
+        time.sleep(1)
 
         self.speech.intro_speech()
 
@@ -67,6 +67,8 @@ class Carlos:
         init_sudoku = SudokuNao(scans)
         sudoku = SudokuNao(scans) 
 
+        self.speech.seen_sudoku()
+
         begin = True
         oldSudoku = []
 
@@ -84,7 +86,8 @@ class Carlos:
                 aup.stopAll()
                 break
 
-            self.speech.ask_for_square()
+            if oldSudoku != []:
+                self.speech.ask_for_square()
 
             oldSudoku = sudoku.sudoku
             if feet.register_question():
@@ -145,8 +148,13 @@ class Carlos:
         self.posture.sleep()
 
 if __name__=='__main__':
-    carlos = Carlos()
     try:
+        global human
+        human = Human()
+        global feet
+        feet = Feet()
+
+        carlos = Carlos()
         while True:
             carlos.play_sudoku()
             time.sleep(2)

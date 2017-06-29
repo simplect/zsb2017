@@ -36,7 +36,7 @@ class Posture:
 
     def resume(self):
         self.basic_awareness.startAwareness()
-        self.basic_awareness.setEngagementMode("SemiEngaged")
+        self.basic_awareness.setEngagementMode("FullyEngaged")
         self.stand()
 
     def sit(self):

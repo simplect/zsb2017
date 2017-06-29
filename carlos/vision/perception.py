@@ -2,6 +2,8 @@ import os
 import time
 from naoqi import ALProxy, ALModule
 
+global human
+
 class Human(ALModule):
     """ A module to react to HumanTracked and PeopleLeft events """
 
@@ -50,29 +52,27 @@ class Human(ALModule):
         """ callback for event PeopleLeft """
         print "got PeopleLeft: lost person ID: {}".format(value)
 
-    def on_face_detected(self, key, value):
+    def on_face_detected(self, eventName, value):
         """ callback for event PeopleLeft """
-        memory.unsubscribeToEvent("FaceDetected",
-                                   "human")
-
+        
         try:
             name = value[1][0][1][2]
         except IndexError:
-            name = ''
-        
+            return
+
+        #memory.unsubscribeToEvent("FaceDetected",
+        #                           "human")
 
         if len(name) and name != self.current_name:
-            print "Detected ", name
-            self.tts.say("Hi there {}, good to see you again.".format(name))
             self.current_name = name
             self.seen_names.append(name)
             self.face_det.setTrackingEnabled(True)
 
-        memory.subscribeToEvent("FaceDetected",
-            "human",
-            "on_face_detected")
+        #memory.subscribeToEvent("FaceDetected",
+        #    "human",
+        #    "on_face_detected")
 
-    def onSmileDetected(self, *_args):
+    def on_smile_detected(self, *_args):
         """ Smile event
         """
         # Unsubscribe to the event when talking,
@@ -94,6 +94,6 @@ class Human(ALModule):
             self.current_name = None
             self.face_det.setTrackingEnabled(False)
 
-    def learnNewHuman(self, name):
+    def learn_new_human(self, name):
             self.face_det.learnFace(name)
             print("Learned new face")
