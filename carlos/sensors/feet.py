@@ -22,18 +22,18 @@ class Feet(ALModule ):
                                 "feetWatcher",
                                 "leftBumper")
 
-    def doRasta(self):
+    def do_rasta(self):
         self.led.rasta(10)
 
-    def ledQuestionMode(self):
+    def led_question_mode(self):
         self.led.fadeRGB("LeftFootLeds",1,0,0,0.1)
         self.led.fadeRGB("RightFootLeds",0,1,0,0.1)
 
-    def ledNormalMode(self):
+    def led_normal_mode(self):
         self.led.fadeRGB("LeftFootLeds",0,0,1,0.1)
         self.led.fadeRGB("RightFootLeds",0,0,1,0.1)
-    
-    def registerQuestion(self):
+
+    def register_question(self):
         self.ledQuestionMode()
         self.feet_pressed = None
         while not self.feet_pressed:
@@ -42,11 +42,10 @@ class Feet(ALModule ):
         self.ledNormalMode()
         return True if self.feet_pressed == 'right' else False
 
-    def rightBumper(self, *_args):
+    def right_bumper(self, *_args):
         self.feet_pressed = 'right'
         pass
 
-    def leftBumper(self, *_args):
+    def left_bumper(self, *_args):
         self.feet_pressed = 'left'
         pass
-
