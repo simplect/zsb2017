@@ -3,7 +3,7 @@ import time
 from naoqi import ALProxy, ALModule
 
 
-class IdleBehaviour:
+class Posture:
 
     # sets the volume to a default value
     def __init__(self):
@@ -30,7 +30,7 @@ class IdleBehaviour:
          self.motion.wbGoToBalance(supportLeg, duration)
          self.motion.wbEnable(False)
 
-    def stopForScan(self):
+    def stop_for_scan(self):
         self.basic_awareness.stopAwareness()
         self.stand()
 
@@ -46,19 +46,16 @@ class IdleBehaviour:
         timeLists   = [[3.0], [3.0], [3.0]]
         isAbsolute  = True
         self.motion.angleInterpolation(names, angleLists, timeLists, isAbsolute)
-    
+
     def resume(self):
         self.basic_awareness.startAwareness()
         self.basic_awareness.setEngagementMode("SemiEngaged")
         self.stand()
-    
-    def doFunny(self):
-        pass
 
     def sit(self):
         self.posture.goToPosture("Sit", 0.5)
 
-    def sitRelax(self):
+    def sit_relax(self):
         self.posture.goToPosture("SitRelax", 0.5)
 
     def stand(self):
@@ -72,15 +69,8 @@ class IdleBehaviour:
         self.basic_awareness.stopAwareness()
         self.motion.rest()
 
-    def startIdling(self, idling):
+    def start_idling(self, idling):
         while idling:
             print("tudele")
             # TODO: Write some funny things here
             time.sleep(20)
-
-
-
-
-
-
-
