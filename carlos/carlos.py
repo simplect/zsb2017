@@ -79,7 +79,7 @@ class Carlos:
                 aup = ALProxy('ALAudioPlayer')
                 song = aup.post.playFile("/home/nao/songs/happy.wav")
                 #self.move.randomDancing()
-                self.feet.do_rasta()
+                feet.do_rasta()
                 time.sleep(60)
                 aup.stopAll()
                 break
@@ -87,15 +87,16 @@ class Carlos:
             self.speech.ask_for_square()
 
             oldSudoku = sudoku.sudoku
-            if self.feet.register_question():
-                self.speech.say_write()
+            if feet.register_question():
+                self.speech.say_write_down()
 
                 scans = self.scan_sudoku(prev = sudoku.sudoku)
 
-                if oldSudoku != sudoku.sudoku:
-                    speech.ask_for_square(begin, end)
+                if oldSudoku != sudoku.make_sudoku_array(scans[0]):
+                    self.speech.ask_for_square()
                 else:
-                    speech.not_filled_anything_in()
+                    self.speech.say_no_answer()
+                    continue
 
                 sudoku.update_sudoku(scans[0])
 
@@ -106,10 +107,7 @@ class Carlos:
                     self.speech.wrong_answer_get_hint(sudoku.sudoku)
 
             else:
-                sudoku.print_arrays()
-                self.speech.wrong_answer_get_hint(sudoku.sudoku)
-        else:
-            self.speech.give_hint(sudoku.sudoku)
+                self.speech.give_hint(sudoku.sudoku)
 
     def scan_sudoku(self,require_answer = False, prev = False):
         print("Started sudoku searcher")
@@ -122,10 +120,10 @@ class Carlos:
         solution = (False, False)
         sudoku = SudokuNao(([],[]))
         while not solution[0]:
-            vision.getImage("sudoku.jpg")
+            self.vision.getImage("sudoku.jpg")
             solution = solve("sudoku.jpg")
             if not solution[0] \
-                    or sudoku.countZeros(sudoku.make_sudoku_array(solution[0])) > 70:
+                    or sudoku.count_zeros(sudoku.make_sudoku_array(solution[0])) > 70:
                 solution = (False, False)
                 continue
             if not solution[1] and require_answer:

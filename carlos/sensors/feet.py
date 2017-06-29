@@ -28,10 +28,13 @@ class Feet(ALModule ):
     def question_mode(self):
         self.led.fadeRGB("LeftFootLeds",1,0,0,0.1)
         self.led.fadeRGB("RightFootLeds",0,1,0,0.1)
+        self.led.on("FaceLeds")
+
 
     def normal_mode(self):
         self.led.fadeRGB("LeftFootLeds",0,0,1,0.1)
         self.led.fadeRGB("RightFootLeds",0,0,1,0.1)
+        self.led.on("FaceLeds")
 
     def register_question(self):
         self.question_mode()

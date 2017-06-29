@@ -51,10 +51,13 @@ class Speech:
         self.animated_speech.say("^start(animations/Stand/Gestures/Yes_1) Well done!")
 
     def ask_for_square(self):
-        if self.count_zeros(sudoku) == 1:
+        """
+        sudokuNao = SudokuNao(sudoku)
+        if sudokuNao.count_zeros(sudoku) == 1:
             self.animated_speech.say("^start(animations/Stand/Gestures/Enthusiastic_3) Only one square to go, do you know the answer?")
         else:
-            self.animated_speech.say("^start(animations/Stand/Gestures/Enthusiastic_5) Can you fill in another square?")
+        """
+        self.animated_speech.say("^start(animations/Stand/Gestures/Enthusiastic_5) Can you fill in another square?")
 
     def say_no_answer(self):
         self.animated_speech.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) You didn't fill in anything. Please, do so now.")

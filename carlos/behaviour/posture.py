@@ -29,7 +29,7 @@ class Posture:
         # angles and the number of times must be the same for each joint.
         # Here, the second joint ("HeadPitch") has three angles, and
         # three corresponding times.
-        angleLists  = [[-1.0], [-1.0], [-1.0]]
+        angleLists  = [[-1.0], [-1.0], [-0.4]]
         timeLists   = [[3.0], [3.0], [3.0]]
         isAbsolute  = True
         self.motion.angleInterpolation(names, angleLists, timeLists, isAbsolute)
@@ -46,7 +46,7 @@ class Posture:
         self.posture.goToPosture("SitRelax", 0.7)
 
     def stand(self):
-        self.posture.goToPosture("Stand", 0.7)
+        self.posture.goToPosture("Stand", 0.6)
 
     def crouch(self):
         self.posture.goToPosture("Crouch", 0.7)

@@ -52,13 +52,14 @@ class Human(ALModule):
 
     def on_face_detected(self, key, value):
         """ callback for event PeopleLeft """
+        memory.unsubscribeToEvent("FaceDetected",
+                                   "human")
+
         try:
             name = value[1][0][1][2]
         except IndexError:
-            return
+            name = ''
         
-        memory.unsubscribeToEvent("FaceDetected",
-                                   "human")
 
         if len(name) and name != self.current_name:
             print "Detected ", name
