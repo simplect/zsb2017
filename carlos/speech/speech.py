@@ -8,9 +8,7 @@ class Speech:
 
     # sets the volume to a default value
     def __init__(self):
-        self.tts = ALProxy("ALTextToSpeech")
         self.animated_speech = ALProxy("ALAnimatedSpeech")
-        self.tts.setVolume(0.8)
 
     # outputs the intro monologuew
     def intro_speech(self):
@@ -23,7 +21,11 @@ class Speech:
             self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hi {}! Would you like to make a sudoku with me? You can press on my feet to answer my questions.".format(self.current_name))
 
     def ask_for_rules(self):
-        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_2) Would you like to hear the rules?")
+        randNum = randint(0,1)
+        if randNum == 0:
+            self.animated_speech.say("^start(animations/Stand/Gestures/Explain_2) Would you like to hear the rules?")
+        if randNum == 1:
+            self.animated_speech.say("^start(animations/Stand/Gestures/Explain_2) Do you want to start with the rules?")
 
     def ask_for_sudoku(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Let me see your sudoku puzzle before we start. ^stop(animations/Stand/Gestures/Explain_1)")
@@ -34,10 +36,16 @@ class Speech:
     def bye(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/You_2) Bye {}! See you soon!.".format(self.current_name))
 
+    def hi(self):
+        randNum = randint(0,1)
+        if randNum == 0:
+            self.animated_speech.say("^start(animations/Stand/Gestures/Explain_2) Hi there {}, good to see you again.".format(self.current_name))
+        if randNum == 1:
+            self.animated_speech.say("^start(animations/Stand/Gestures/Explain_2) Hello {}, I missed you.".format(self.current_name))
+
     def wrong_answer_get_hint(self, sudoku):
         self.animated_speech.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) Oops! I think you made a mistake.")
         self.giveHint(sudoku)
-
 
     def right_answer(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Yes_1) Well done!")
@@ -93,20 +101,9 @@ class Speech:
         elif randNum == 3:
             self.animated_speech.say("^start(animations/Stand/Gestures/YouKnowWhat_5) Look at three boxes and see if there are two identical numbers in two of the boxes. Maybe you can fill in this number in the third box?")
 
-    # reads aloud the given sudoku
-    def read_sudoku(self, sudoku):
-        self.animated_speech.say("^start(animations/Stand/Gestures/Me_1) Okay. I will now read all the digits from the top left corner down to the bottom right corner.")
-        for row in range(9):
-            for col in range(9):
-                digit = sudoku[row][col]
-                if digit == 0:
-                    self.tts.say("empty")
-                else:
-                    self.tts.say(str(digit))
-
     # tells the player to look at a given number
     def look_for_number(self, digit):
-        self.tts.say("Here's a tip: maybe you can fill out number"+ str(digit))
+        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Here's a tip: maybe you can fill out number"+ str(digit))
 
 class SudokuNao:
     def __init__(self, strings):
