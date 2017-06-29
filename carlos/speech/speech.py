@@ -16,11 +16,17 @@ class Speech:
     def introSpeech(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/You_1) Hey {}! Do you want to make a sudoku with me? You can press on my feet to answer my questions.".format(self.current_name))
 
+    def askForRules(self):
+        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_2) Would you like to hear the rules?")
+
     def askForSudoku(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Let me see your sudoku puzzle before we start. ^stop(animations/Stand/Gestures/Explain_1)")
 
     def askForCheck(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_1) Write it down and show it to me, please! I can check it for you!")
+
+    def bye(self):
+        self.animated_speech.say("^start(animations/Stand/Gestures/You_2) Bye {}! See you soon!.".format(self.current_name))
 
     def wrongAnswerGetHint(self, sudoku):
         self.animated_speech.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) Oops! I think you made a mistake. Do you want a hint?")
@@ -89,7 +95,6 @@ class Speech:
     def getGameRules(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_7) To complete your sudoku correctly, you must fill in al the empty squares.")
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_8) When you are finished, the numbers 1 to 9 must appear exactly once in each row, column and box.")
-        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_5) During the game, you must keep this in mind and use this knowledge to your advantage, while filling in squares.")
 
     # gives one of the four random hints
     def getRandomHint(self):

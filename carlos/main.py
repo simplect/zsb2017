@@ -79,43 +79,49 @@ try:
 
             if feetWatcher.registerQuestion():
                 speech.askForSudoku()
-                idle.stand()
-                idle.basic_awareness.stopAwareness()
-                idle.stopForScan()
-                scans = sudoku_searcher(require_answer=True)
-                idle.resume()
-                sudoku = SudokuNao(scans)
+                if feetWatcher.registerQuestion():
+                    speech.getGameRules()
 
-                while True:
-                    sudoku.printArrays()
-                    end = sudoku.checkIfEnd(sudoku.sudoku)
-                    speech.askForSquare(begin, end)
+                    speech.askForSudoku()
+                    idle.stand()
+                    idle.basic_awareness.stopAwareness()
+                    idle.stopForScan()
+                    scans = sudoku_searcher(require_answer=True)
+                    idle.resume()
+                    sudoku = SudokuNao(scans)
 
-                    """
-                    if oldSudoku != sudoku.sudoku:
+                    while True:
+                        sudoku.printArrays()
+                        end = sudoku.checkIfEnd(sudoku.sudoku)
                         speech.askForSquare(begin, end)
-                    else:
-                        speech.notFilledAnythingIn()
+
                         """
-                    oldSudoku = sudoku.sudoku
-                    if feetWatcher.registerQuestion():
-                        speech.askForCheck()
-                        idle.stopForScan()
-                        scans = sudoku_searcher(prev = sudoku.sudoku)
-                        idle.resume()
-                        sudoku.updateSudoku(scans[0])
-                        if sudoku.answerIsCorrect():
-                            speech.rightAnswer()
+                        if oldSudoku != sudoku.sudoku:
+                            speech.askForSquare(begin, end)
                         else:
-                            sudoku.printArrays()
-                            speech.wrongAnswerGetHint(sudoku.sudoku)
-                    else:
-                        speech.giveHint(sudoku.sudoku)
-                if end:
-                    #aup = ALProxy('ALAudioPlayer', IP, PORT)
-                    #song = aup.post.playFile("./speech/Pharrell_Williams_-_Happy_Official_Music_Video_.wav")
-                    #randomDancing()
-                    break
+                            speech.notFilledAnythingIn()
+                            """
+                        oldSudoku = sudoku.sudoku
+                        if feetWatcher.registerQuestion():
+                            speech.askForCheck()
+                            idle.stopForScan()
+                            scans = sudoku_searcher(prev = sudoku.sudoku)
+                            idle.resume()
+                            sudoku.updateSudoku(scans[0])
+                            if sudoku.answerIsCorrect():
+                                speech.rightAnswer()
+                            else:
+                                sudoku.printArrays()
+                                speech.wrongAnswerGetHint(sudoku.sudoku)
+                        else:
+                            speech.giveHint(sudoku.sudoku)
+                    if end:
+                        #aup = ALProxy('ALAudioPlayer', IP, PORT)
+                        #song = aup.post.playFile("./speech/Pharrell_Williams_-_Happy_Official_Music_Video_.wav")
+                        #randomDancing()
+                        break
+                else:
+                    speech.bye()
             else:
                 print("game not entered")
             humanEventWatcher.current_name = None
