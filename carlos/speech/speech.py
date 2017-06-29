@@ -45,7 +45,7 @@ class Speech:
 
     def wrong_answer_get_hint(self, sudoku):
         self.animated_speech.say("^start(animations/Stand/Emotions/Neutral/Embarrassed_1) Oops! I think you made a mistake.")
-        self.giveHint(sudoku)
+        self.give_hint(sudoku)
 
     def right_answer(self):
         self.animated_speech.say("^start(animations/Stand/Gestures/Yes_1) Well done!")
@@ -63,7 +63,7 @@ class Speech:
         self.animated_speech.say("^start(animations/Stand/Gestures/ShowSky_1) Let me give you a hint.")
         randNum = randint(1,2)
         if randNum == 1:
-            self.getRandomHint()
+            self.get_random_hint()
         elif randNum == 2:
             sudokuNao = SudokuNao(([],[]))
             digit = sudokuNao.best_number(sudoku)
@@ -107,11 +107,11 @@ class Speech:
 
 class SudokuNao:
     def __init__(self, strings):
-        self.sudoku = self.makeSudokuArray(strings[0])
-        self.sudokuAnswer = self.makeSudokuArray(strings[1])
+        self.sudoku = self.make_sudoku_array(strings[0])
+        self.sudokuAnswer = self.make_sudoku_array(strings[1])
 
     def update_sudoku(self, string):
-        self.sudoku = self.makeSudokuArray(string)
+        self.sudoku = self.make_sudoku_array(string)
 
     def is_correct(self):
         for x in range(9):
@@ -169,6 +169,6 @@ class SudokuNao:
         return numZeros
 
     def check_if_end(self, sudoku):
-        if self.countZeros(sudoku) == 0:
+        if self.count_zeros(sudoku) == 0:
             return True
         return False

@@ -13,7 +13,7 @@ from sensors.feet import Feet
 from random import randint
 
 # SET-UP
-IP = '169.254.131.247'
+IP = '169.254.35.27'
 PORT = 9559
 
 # We need this broker to be able to construct
@@ -25,15 +25,16 @@ carlos_broker = ALBroker("carlosBroker",
    IP,         # parent broker IP
    PORT)       # parent broker port
 
+global human
+global feet
+
+human = Human()
+feet = Feet()
+
 class Carlos:
     def __init__(self):
 
-        # AL MODULES
-        global human
-        global feet
-        human = Human()
-        feet = Feet()
-
+ 
         # Normal classes
         self.speech = Speech()
         self.posture = Posture()
@@ -42,24 +43,24 @@ class Carlos:
 
 
     def play_sudoku(self):
-        if not self.human.current_name:
+        if not human.current_name:
             return
 
         self.speech.current_name = human.current_name
 
-        self.speech.introSpeech()
+        self.speech.intro_speech()
 
-        if not self.feet.register_question():
+        if not feet.register_question():
             self.speech.bye()
-            self.human.find_new()
+            human.find_new()
             return
         
-        self.speech.askForRules()
+        self.speech.ask_for_rules()
 
-        if self.feet.registerQuestion():
-            self.speech.getGameRules()
+        if feet.register_question():
+            self.speech.get_game_rules()
 
-        self.speech.askForSudoku()
+        self.speech.ask_for_sudoku()
  
         scans = self.scan_sudoku(require_answer=True)
 
@@ -108,7 +109,7 @@ class Carlos:
                 sudoku.print_arrays()
                 self.speech.wrong_answer_get_hint(sudoku.sudoku)
         else:
-            self.speech.giveHint(sudoku.sudoku)
+            self.speech.give_hint(sudoku.sudoku)
 
     def scan_sudoku(self,require_answer = False, prev = False):
         print("Started sudoku searcher")
@@ -116,7 +117,7 @@ class Carlos:
 
         self.posture.stand()
         self.posture.basic_awareness.stopAwareness()
-        self.posture.stopForScan()
+        self.posture.stop_for_scan()
 
         solution = (False, False)
         sudoku = SudokuNao(([],[]))
@@ -124,14 +125,14 @@ class Carlos:
             vision.getImage("sudoku.jpg")
             solution = solve("sudoku.jpg")
             if not solution[0] \
-                    or sudoku.countZeros(sudoku.makeSudokuArray(solution[0])) > 70:
+                    or sudoku.countZeros(sudoku.make_sudoku_array(solution[0])) > 70:
                 solution = (False, False)
                 continue
             if not solution[1] and require_answer:
                 solution = (False, False)
                 continue
             if prev:
-                new_sudoku = sudoku.makeSudokuArray(solution[0])
+                new_sudoku = sudoku.make_sudoku_array(solution[0])
                 for x in range(9):
                     for y in range(9):
                         if prev[x][y] != 0 and\
@@ -148,10 +149,11 @@ class Carlos:
 if __name__=='__main__':
     carlos = Carlos()
     try:
-        carlos.play_sudoku()
-        time.sleep(2)
+        while True:
+            carlos.play_sudoku()
+            time.sleep(2)
     except KeyboardInterrupt:
         print "Interrupted by user, shutting down"
         carlos.sleep()
-        myBroker.shutdown()
+        carlos_broker.shutdown()
         sys.exit(0)

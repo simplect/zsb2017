@@ -13,7 +13,7 @@ class Posture:
 
         self.motion.wakeUp()
 
-        self.posture.goToPosture("StandInit", 0.5)
+        self.posture.goToPosture("StandInit", 0.7)
 
         self.resume()
 
@@ -40,16 +40,16 @@ class Posture:
         self.stand()
 
     def sit(self):
-        self.posture.goToPosture("Sit", 0.5)
+        self.posture.goToPosture("Sit", 0.7)
 
     def sit_relax(self):
-        self.posture.goToPosture("SitRelax", 0.5)
+        self.posture.goToPosture("SitRelax", 0.7)
 
     def stand(self):
-        self.posture.goToPosture("Stand", 0.5)
+        self.posture.goToPosture("Stand", 0.7)
 
     def crouch(self):
-        self.posture.goToPosture("Crouch", 0.5)
+        self.posture.goToPosture("Crouch", 0.7)
 
     def sleep(self):
         print("Sleeping")

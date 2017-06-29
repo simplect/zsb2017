@@ -50,12 +50,13 @@ class Human(ALModule):
         """ callback for event PeopleLeft """
         print "got PeopleLeft: lost person ID: {}".format(value)
 
-    def on_face_detected(self, key, value, msg):
+    def on_face_detected(self, key, value):
         """ callback for event PeopleLeft """
         try:
             name = value[1][0][1][2]
         except IndexError:
             return
+        
         memory.unsubscribeToEvent("FaceDetected",
                                    "human")
 
