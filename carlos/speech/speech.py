@@ -114,7 +114,7 @@ class SudokuNao:
         for x in range(9):
             for y in range(9):
                 if self.sudoku[x][y] == 0:
-                    continue
+                    return False
                 if self.sudoku[x][y] != self.sudokuAnswer[x][y]:
                     return False
         return True
