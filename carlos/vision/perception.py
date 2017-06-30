@@ -1,3 +1,18 @@
+# perception.py
+
+# Merijn Testroote, 11173106
+# Babette Mooij, 10740414
+# Alexandra Spruit, 11262273
+# Hannah Min, 11011580
+
+# This code has been developed for the course ZSB 2017
+# at the University of Amsterdam
+
+# 30-06-2017 - We take no responsibility for the 
+# effects of this software nor if Carlos is taking over the
+# world or getting around in fancy cars and winning all poker games.
+# The code is served as is.
+
 import os
 import time
 from naoqi import ALProxy, ALModule
