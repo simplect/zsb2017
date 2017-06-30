@@ -38,7 +38,8 @@ class Carlos:
 
     def play_sudoku(self):
 
-        if not human.current_name:
+        if not human.current_name\
+                and human.current_name not in human.names_seen:
             return
 
 
@@ -53,6 +54,7 @@ class Carlos:
         if not feet.register_question():
             self.speech.bye()
             human.find_new()
+            self.posture.stand()
             return
         
         self.speech.ask_for_rules()
@@ -77,14 +79,6 @@ class Carlos:
 
             sudoku.print_arrays()
 
-            if sudoku.check_if_end(sudoku.sudoku):
-                aup = ALProxy('ALAudioPlayer')
-                song = aup.post.playFile("/home/nao/songs/happy.wav")
-                #self.move.randomDancing()
-                feet.do_rasta()
-                time.sleep(60)
-                aup.stopAll()
-                break
 
             if oldSudoku != []:
                 self.speech.ask_for_square()
@@ -95,11 +89,20 @@ class Carlos:
 
                 scans = self.scan_sudoku(prev = sudoku.sudoku)
 
-                if oldSudoku != sudoku.make_sudoku_array(scans[0]):
-                    self.speech.ask_for_square()
-                else:
+                if oldSudoku == sudoku.make_sudoku_array(scans[0]):
+                    #self.speech.ask_for_square()
                     self.speech.say_no_answer()
                     continue
+
+                if sudoku.check_if_end(sudoku.sudoku):
+                    aup = ALProxy('ALAudioPlayer')
+                    song = aup.post.playFile("/home/nao/songs/happy.wav")
+                    #self.move.randomDancing()
+                    feet.do_rasta()
+                    time.sleep(60)
+                    aup.stopAll()
+                    break
+
 
                 sudoku.update_sudoku(scans[0])
 

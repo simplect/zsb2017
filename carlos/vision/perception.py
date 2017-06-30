@@ -60,17 +60,12 @@ class Human(ALModule):
         except IndexError:
             return
 
-        #memory.unsubscribeToEvent("FaceDetected",
-        #                           "human")
-
-        if len(name) and name != self.current_name:
+        if len(name) \
+                and name != self.current_name \
+                and name not in self.names_seen:
             self.current_name = name
-            self.seen_names.append(name)
+            self.names_seen.append(name)
             self.face_det.setTrackingEnabled(True)
-
-        #memory.subscribeToEvent("FaceDetected",
-        #    "human",
-        #    "on_face_detected")
 
     def on_smile_detected(self, *_args):
         """ Smile event
