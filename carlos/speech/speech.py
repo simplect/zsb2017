@@ -86,7 +86,7 @@ class Speech:
 
     # outputs the general rules of the sudoku game
     def get_game_rules(self):
-        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_7) To complete your sudoku correctly, you must fill in al the empty squares.")
+        self.animated_speech.say("^start(animations/Stand/Gestures/Explain_7) To complete your sudoku correctly, you must fill in the empty squares.")
         self.animated_speech.say("^start(animations/Stand/Gestures/Explain_8) When you are finished, the numbers 1 to 9 must appear exactly once in each row, column and box.")
 
     # gives one of the four random hints
